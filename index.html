@@ -7,7 +7,7 @@
   <meta name="description" content="Hướng dẫn nhanh DJI Osmo Pocket 4 và DJI Mic Mini 2 cho người mới" />
 
   <!-- PWA / iOS -->
-  <meta name="theme-color" content="#FAF1F1" />
+  <meta name="theme-color" content="#F6F1EA" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -31,13 +31,13 @@
             round: ['ui-rounded', '"SF Pro Rounded"', 'Nunito', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
           },
           colors: {
-            ink: '#2E2430',
-            soft: '#7C6F80',
-            rose: { DEFAULT: '#C2577A', 50: '#FCF1F4', 100: '#F8E1E8', 600: '#B04A6C' },
-            lilac: { DEFAULT: '#8B72C9', 50: '#F4F0FC' },
-            sage: { DEFAULT: '#4E9A7A', 50: '#EAF5EF' },
-            peach: { DEFAULT: '#D98A4E', 50: '#FDF2E8' },
-            sky: { DEFAULT: '#5B84C4', 50: '#EEF3FB' },
+            ink: '#3A322B',
+            soft: '#857868',
+            rose: { DEFAULT: '#9A6B4B', 50: '#F5ECE1', 100: '#EEDFCF', 600: '#86593B' },
+            lilac: { DEFAULT: '#7D6E5C', 50: '#F1ECE4' },
+            sage: { DEFAULT: '#6F8F62', 50: '#EDF2E8' },
+            peach: { DEFAULT: '#B07D45', 50: '#F7EEDF' },
+            sky: { DEFAULT: '#6D7F86', 50: '#EDF0F0' },
           },
         },
       },
@@ -49,145 +49,99 @@
 
   <style>
     :root {
-      --bg: #FAF1F1;
-      --glass: rgba(255, 255, 255, .58);
-      --glass-border: rgba(255, 255, 255, .85);
-      --hairline: rgba(46, 36, 48, .08);
-      --shadow: 0 1px 1px rgba(90, 50, 70, .04), 0 10px 30px -8px rgba(120, 70, 95, .14);
+      --bg: #F6F1EA;
+      --card: #FFFDF9;
+      --line: #ECE4D8;
+      --hairline: rgba(58, 50, 43, .08);
+      --accent: #9A6B4B;
     }
-    html, body { background: var(--bg); color: #2E2430; -webkit-tap-highlight-color: transparent; }
+    html, body { background: var(--bg); color: #3A322B; -webkit-tap-highlight-color: transparent; }
     body { -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; min-height: 100vh; }
     [x-cloak] { display: none !important; }
 
-    /* Nền lụa: các mảng màu mềm phía sau lớp kính */
-    .backdrop { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
-      background: linear-gradient(180deg, #FBF4F3 0%, #F7EEF4 55%, #F3EEF8 100%); }
-    .blob { position: absolute; border-radius: 999px; filter: blur(60px); opacity: .75; }
-    .blob.a { width: 340px; height: 340px; background: #F7CFDB; top: -90px; left: -80px; }
-    .blob.b { width: 300px; height: 300px; background: #DED3F6; top: 30%; right: -110px; }
-    .blob.c { width: 280px; height: 280px; background: #FBE0CF; bottom: -80px; left: 10%; }
-
-    /* Liquid glass */
-    .glass {
-      background: var(--glass);
-      -webkit-backdrop-filter: blur(28px) saturate(170%);
-      backdrop-filter: blur(28px) saturate(170%);
-      border: 1px solid var(--glass-border);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.9), var(--shadow);
-    }
-    .card { border-radius: 24px; }
+    /* Thẻ phẳng, bo tròn */
+    .panel { background: var(--card); border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(80, 60, 40, .04); }
+    .card { border-radius: 22px; }
     .hair > * + * { border-top: 1px solid var(--hairline); }
 
-    /* Ô icon kiểu System Settings */
-    .tile { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 2px 6px -2px rgba(0,0,0,.18); }
-    .tile.sm { width: 28px; height: 28px; border-radius: 8px; }
-    .g-rose  { background: linear-gradient(160deg, #E58AA6, #C2577A); }
-    .g-lilac { background: linear-gradient(160deg, #B39DE8, #8B72C9); }
-    .g-peach { background: linear-gradient(160deg, #F2B27F, #D98A4E); }
-    .g-sky   { background: linear-gradient(160deg, #94B6EA, #5B84C4); }
-    .g-sage  { background: linear-gradient(160deg, #84C5A6, #4E9A7A); }
+    /* Ô icon: nền be nhạt, icon màu đất */
+    .tile { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .tile.sm { width: 28px; height: 28px; border-radius: 9px; }
+    .g-rose  { background: #F3E7DA; color: #9A6B4B; }
+    .g-lilac { background: #EEE8DE; color: #7D6E5C; }
+    .g-peach { background: #F5E9D6; color: #A6763F; }
+    .g-sky   { background: #E9ECE9; color: #61757C; }
+    .g-sage  { background: #E8EEE2; color: #627F56; }
 
-    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 13px; font-weight: 600;
-      background: rgba(255,255,255,.8); border: 1px solid var(--hairline); white-space: nowrap; }
-    .num { flex-shrink: 0; width: 26px; height: 26px; border-radius: 999px; background: #FCF1F4; color: #C2577A; font-size: 13px; font-weight: 800;
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 600;
+      background: #F6F0E7; border: 1px solid var(--line); white-space: nowrap; }
+    .num { flex-shrink: 0; width: 26px; height: 26px; border-radius: 999px; background: #F3EADD; color: #9A6B4B; font-size: 13px; font-weight: 800;
       display: flex; align-items: center; justify-content: center; margin-top: 1px; }
     .h2 { font-family: ui-rounded, "SF Pro Rounded", Nunito, -apple-system, sans-serif; font-size: 19px; font-weight: 700; line-height: 1.25; }
-    .tip { display: flex; gap: 10px; border-radius: 16px; padding: 12px 14px; font-size: 14px; line-height: 1.55; }
-    .tip.rose { background: #FCF1F4; color: #7A3550; }
-    .tip.sage { background: #EAF5EF; color: #2F6B52; }
-    .tip.sky  { background: #EEF3FB; color: #34558A; }
-    .tip.peach{ background: #FDF2E8; color: #8A5225; }
-    .section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #7C6F80; padding: 0 6px; }
+    .tip { display: flex; gap: 10px; border-radius: 18px; padding: 12px 14px; font-size: 14px; line-height: 1.55; }
+    .tip.rose { background: #F5ECE1; color: #6E4E36; }
+    .tip.sage { background: #EDF2E8; color: #4D6644; }
+    .tip.sky  { background: #EEF0EE; color: #4F5E62; }
+    .tip.peach{ background: #F7EEDF; color: #7A5A2E; }
+    .section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #857868; padding: 0 6px; }
 
-    .fade-in { animation: fade .28s cubic-bezier(.2,.8,.2,1); }
-    @keyframes fade { from { opacity: 0; transform: translateY(6px) scale(.995); } to { opacity: 1; transform: none; } }
-    .pop { animation: pop .3s cubic-bezier(.2,.9,.3,1.4); }
-    @keyframes pop { 0% { transform: scale(.5); } 100% { transform: scale(1); } }
+    .fade-in { animation: fade .25s ease-out; }
+    @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    .pop { animation: pop .25s ease-out; }
+    @keyframes pop { 0% { transform: scale(.6); } 100% { transform: scale(1); } }
     .press { transition: transform .15s ease, background-color .15s ease; }
-    .press:active { transform: scale(.97); }
+    .press:active { transform: scale(.98); }
 
     /* Segmented control */
     .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; padding: 4px; border-radius: 999px; position: relative; }
     .seg button { position: relative; z-index: 1; padding: 9px 10px; border-radius: 999px; font-size: 14px; font-weight: 600; transition: color .2s; }
-    .seg .knob { position: absolute; top: 4px; bottom: 4px; left: 4px; border-radius: 999px; background: #fff;
-      box-shadow: 0 2px 8px -2px rgba(194,87,122,.3); transition: transform .3s cubic-bezier(.3,1.2,.4,1); }
+    .seg .knob { position: absolute; top: 4px; bottom: 4px; left: 4px; border-radius: 999px; background: #F1E8DB;
+      transition: transform .3s ease; }
 
-    /* Thanh tab nổi dạng viên thuốc (điện thoại) */
+    /* Thanh tab nổi bo tròn */
     .dock { position: fixed; z-index: 30; left: 50%; transform: translateX(-50%);
-      bottom: calc(env(safe-area-inset-bottom) + 12px); width: min(440px, calc(100% - 24px)); border-radius: 999px; padding: 5px; }
-    .dock .indicator { position: absolute; top: 0; bottom: 0; left: 0; width: 20%; border-radius: 999px;
-      background: rgba(255,255,255,.92); box-shadow: 0 2px 10px -2px rgba(194,87,122,.28), inset 0 0 0 1px rgba(194,87,122,.08);
-      transition: transform .35s cubic-bezier(.3,1.25,.4,1); }
+      bottom: calc(env(safe-area-inset-bottom) + 12px); width: min(460px, calc(100% - 24px)); border-radius: 999px; padding: 5px;
+      background: rgba(255, 253, 249, .96); border: 1px solid var(--line); box-shadow: 0 6px 20px -8px rgba(80, 60, 40, .18); }
+    .dock .indicator { position: absolute; top: 0; bottom: 0; left: 0; width: 20%; border-radius: 999px; background: #F1E8DB;
+      transition: transform .3s ease; }
 
     .pt-safe { padding-top: max(env(safe-area-inset-top), 16px); }
     .mobile-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 112px); }
 
     /* Màn hình minh hoạ thao tác vuốt */
-    .screen { position: relative; width: 132px; height: 92px; border-radius: 16px; background: linear-gradient(160deg, #3A2F3D, #241D27);
-      box-shadow: inset 0 0 0 3px #4A3F4D, 0 8px 20px -8px rgba(46,36,48,.5); flex-shrink: 0; }
-    .screen .arr { position: absolute; color: #fff; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;
-      width: 22px; height: 22px; border-radius: 999px; }
-
-    /* Cửa sổ macOS trên màn hình rộng */
-    @media (min-width: 768px) {
-      .window { height: min(800px, calc(100vh - 64px)); border-radius: 26px; overflow: hidden;
-        background: rgba(255,255,255,.42); -webkit-backdrop-filter: blur(40px) saturate(170%); backdrop-filter: blur(40px) saturate(170%);
-        border: 1px solid rgba(255,255,255,.8); box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 30px 80px -20px rgba(120,70,95,.28), 0 0 0 .5px rgba(46,36,48,.08); }
-      .sidebar { background: rgba(255,255,255,.38); border-right: 1px solid var(--hairline); }
-      .main-scroll { overflow-y: auto; }
-      .mobile-bottom { padding-bottom: 40px; }
-    }
-    .traffic span { width: 12px; height: 12px; border-radius: 999px; display: inline-block; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.12); }
+    .screen { position: relative; width: 132px; height: 92px; border-radius: 18px; background: #4A3F36;
+      box-shadow: inset 0 0 0 3px #5A4E44; flex-shrink: 0; }
+    .screen .arr { position: absolute; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 999px; box-shadow: 0 0 0 2px #FFFDF9; }
 
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
   </style>
 </head>
 
 <body class="font-sans" x-data="app()" x-init="init()">
-  <div class="backdrop" aria-hidden="true"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div></div>
 
-  <div class="relative z-10 md:min-h-screen md:flex md:items-center md:justify-center md:p-8">
-    <div class="window md:flex w-full md:max-w-[1000px]">
+  <div class="mx-auto w-full max-w-3xl">
+    <div>
 
-      <!-- ===== Sidebar (máy tính) ===== -->
-      <aside class="sidebar hidden md:flex md:flex-col w-[248px] shrink-0 p-4">
-        <div class="traffic flex gap-2 px-1 pt-1 pb-6" aria-hidden="true">
-          <span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span>
-        </div>
-        <p class="px-2 text-[11px] font-semibold uppercase tracking-[.08em] text-soft/80">Osmo Guide</p>
-        <nav class="mt-2 space-y-1">
-          <template x-for="(t, i) in tabs" :key="i">
-            <button @click="go(i)" class="press w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-left transition"
-                    :class="tab === i ? 'bg-white/85 shadow-[0_1px_6px_-2px_rgba(194,87,122,.25)]' : 'hover:bg-white/45'">
-              <span class="tile sm" :class="t.grad" x-html="t.icon"></span>
-              <span class="text-[14px] font-medium" :class="tab === i ? 'text-ink' : 'text-ink/80'" x-text="t.title"></span>
-            </button>
-          </template>
-        </nav>
-        <div class="mt-auto px-2 text-[12px] leading-relaxed text-soft">
-          DJI Osmo Pocket 4<br />DJI Mic Mini 2
-        </div>
-      </aside>
 
       <!-- ===== Nội dung ===== -->
       <div class="main-scroll flex-1 min-w-0">
-        <header class="pt-safe md:pt-8 px-5 md:px-10 pb-4">
+        <header class="pt-safe md:pt-8 px-5 md:px-7 pb-4">
           <div class="flex items-center gap-2.5 pt-2">
-            <span class="md:hidden"><span class="tile sm" :class="tabs[tab].grad" x-html="tabs[tab].icon"></span></span>
+            <span><span class="tile sm" :class="tabs[tab].grad" x-html="tabs[tab].icon"></span></span>
             <p class="text-[13px] font-semibold text-rose" x-text="tabs[tab].eyebrow"></p>
           </div>
           <h1 class="font-round text-[34px] md:text-[38px] leading-[1.1] font-extrabold tracking-tight mt-2" x-text="tabs[tab].title"></h1>
           <p class="text-[15px] text-soft mt-1.5" x-text="tabs[tab].lead"></p>
         </header>
 
-        <main class="px-4 md:px-10 mobile-bottom">
+        <main class="px-4 md:px-6 mobile-bottom">
 
           <!-- ================================================================
                TAB 1: BẮT ĐẦU
           ================================================================= -->
           <section x-show="tab === 0" x-cloak class="fade-in space-y-3.5">
-            <div class="seg glass max-w-sm">
+            <div class="seg panel max-w-sm">
               <div class="knob" style="width: calc((100% - 8px) / 2)" :style="`width: calc((100% - 8px) / 2); transform: translateX(${startView === 'first' ? '100%' : '0'})`"></div>
               <button @click="setStart('now')" :class="startView === 'now' ? 'text-rose' : 'text-soft'">Quay ngay</button>
               <button @click="setStart('first')" :class="startView === 'first' ? 'text-rose' : 'text-soft'">Lần đầu dùng</button>
@@ -195,7 +149,7 @@
 
             <!-- ---------- Quay ngay ---------- -->
             <div x-show="startView === 'now'" class="fade-in grid gap-3.5 md:grid-cols-2">
-              <article class="glass card p-5 md:col-span-2">
+              <article class="panel card p-5 md:col-span-2">
                 <div class="flex items-center gap-3">
                   <span class="tile g-rose"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.3 7.2a8 8 0 1 0 11.4 0"/></svg></span>
                   <div>
@@ -205,12 +159,12 @@
                 </div>
                 <p class="text-[16px] mt-3 leading-relaxed">Xoay màn hình của Osmo Pocket 4 ra, máy tự bật. Xoay màn hình về chỗ cũ là máy tắt.</p>
                 <div class="grid grid-cols-2 gap-2.5 mt-4">
-                  <div class="rounded-2xl bg-white/70 border border-white p-4">
+                  <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] p-4">
                     <div class="h-11 flex items-end"><div class="w-12 h-7 rounded-[9px] border-[2.5px] border-rose/80 bg-rose-50"></div></div>
                     <p class="font-semibold text-[15px] mt-3">Xoay ngang</p>
                     <p class="text-[13px] text-soft mt-0.5">Khung 16:9 cho YouTube</p>
                   </div>
-                  <div class="rounded-2xl bg-white/70 border border-white p-4">
+                  <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] p-4">
                     <div class="h-11 flex items-end"><div class="w-7 h-11 rounded-[9px] border-[2.5px] border-lilac/80 bg-lilac-50"></div></div>
                     <p class="font-semibold text-[15px] mt-3">Giữ dọc</p>
                     <p class="text-[13px] text-soft mt-0.5">Khung 9:16 cho TikTok, Reels</p>
@@ -219,7 +173,7 @@
                 <p class="text-[13px] text-soft mt-3">Không muốn xoay? Giữ dọc và đổi tỉ lệ khung hình trong menu cũng được.</p>
               </article>
 
-              <article class="glass card p-5">
+              <article class="panel card p-5">
                 <div class="flex items-center gap-3">
                   <span class="tile g-lilac"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
                   <div>
@@ -229,8 +183,8 @@
                 </div>
                 <p class="text-[16px] mt-3 leading-relaxed">Lấy DJI Mic Mini 2 ra khỏi hộp sạc. Mic tự bật và tự kết nối với máy đã ghép trước đó.</p>
                 <div class="mt-3.5 flex items-center gap-3 rounded-2xl bg-sage-50 px-4 py-3">
-                  <span class="h-3 w-3 shrink-0 rounded-full bg-sage shadow-[0_0_0_4px_rgba(78,154,122,.18)]"></span>
-                  <p class="text-[14px] text-[#2F6B52]"><b>Đèn xanh đứng yên</b> là đã kết nối.</p>
+                  <span class="h-3 w-3 shrink-0 rounded-full bg-sage shadow-[0_0_0_4px_rgba(111,143,98,.18)]"></span>
+                  <p class="text-[14px] text-[#4D6644]"><b>Đèn xanh đứng yên</b> là đã kết nối.</p>
                 </div>
                 <ul class="mt-3.5 space-y-2.5 text-[15px] leading-relaxed">
                   <li class="flex gap-2.5"><span class="mt-[9px] h-1.5 w-1.5 rounded-full bg-rose/60 shrink-0"></span><span>Kẹp ở cổ áo, cách miệng <b class="whitespace-nowrap">15–20 cm</b>, đầu mic hướng lên miệng.</span></li>
@@ -239,7 +193,7 @@
                 </ul>
               </article>
 
-              <article class="glass card p-5">
+              <article class="panel card p-5">
                 <div class="flex items-center gap-3">
                   <span class="tile g-peach"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg></span>
                   <div>
@@ -250,7 +204,7 @@
                 <p class="text-[16px] mt-3">Ba thao tác dùng nhiều nhất:</p>
                 <div class="mt-2 hair">
                   <div class="flex items-center justify-between gap-3 py-3">
-                    <span class="chip"><span class="h-3 w-3 rounded-full bg-[#E5484D]"></span>Nút đỏ</span>
+                    <span class="chip"><span class="h-3 w-3 rounded-full bg-[#D9574A]"></span>Nút đỏ</span>
                     <span class="text-[15px] font-medium text-right">Bắt đầu / Dừng quay</span>
                   </div>
                   <div class="flex items-center justify-between gap-3 py-3">
@@ -277,7 +231,7 @@
                 <span>Mới mua máy? Làm lần lượt 6 bước dưới đây <b>một lần duy nhất</b>. Những lần sau chỉ cần xem phần “Quay ngay”.</span>
               </div>
 
-              <article class="glass card p-5">
+              <article class="panel card p-5">
                 <ol class="space-y-5">
                   <template x-for="(s, i) in firstSteps" :key="i">
                     <li class="flex gap-3.5">
@@ -295,12 +249,12 @@
                 </ol>
               </article>
 
-              <article class="glass card p-5">
+              <article class="panel card p-5">
                 <h2 class="h2">Trong hộp thường có gì?</h2>
                 <p class="text-[14px] text-soft mt-0.5">Tùy bản Standard hay Combo, phụ kiện có thể khác nhau.</p>
                 <div class="mt-3 grid grid-cols-2 gap-2">
                   <template x-for="b in boxItems" :key="b.name">
-                    <div class="rounded-2xl bg-white/70 border border-white px-3.5 py-3">
+                    <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] px-3.5 py-3">
                       <p class="text-[14px] font-semibold leading-snug" x-text="b.name"></p>
                       <p class="text-[12.5px] text-soft mt-0.5 leading-snug" x-text="b.desc"></p>
                     </div>
@@ -314,7 +268,7 @@
                TAB 2: LÀM QUEN
           ================================================================= -->
           <section x-show="tab === 1" x-cloak class="fade-in space-y-3.5">
-            <div class="seg glass max-w-sm">
+            <div class="seg panel max-w-sm">
               <div class="knob" style="width: calc((100% - 8px) / 2)" :style="`width: calc((100% - 8px) / 2); transform: translateX(${learnView === 'mic' ? '100%' : '0'})`"></div>
               <button @click="setLearn('cam')" :class="learnView === 'cam' ? 'text-rose' : 'text-soft'">Osmo Pocket 4</button>
               <button @click="setLearn('mic')" :class="learnView === 'mic' ? 'text-rose' : 'text-soft'">Mic Mini 2</button>
@@ -323,7 +277,7 @@
             <!-- ---------- Osmo Pocket 4 ---------- -->
             <div x-show="learnView === 'cam'" class="fade-in grid gap-3.5 md:grid-cols-2">
 
-              <article class="glass card p-5">
+              <article class="panel card p-5">
                 <h2 class="h2">Các bộ phận chính</h2>
                 <div class="mt-2 hair">
                   <template x-for="p in camParts" :key="p.name">
@@ -338,7 +292,7 @@
                 </div>
               </article>
 
-              <article class="glass card p-5">
+              <article class="panel card p-5">
                 <h2 class="h2">Joystick &amp; các nút</h2>
                 <p class="text-[14px] text-soft mt-0.5">Joystick là núm nhỏ dưới màn hình, vừa gạt vừa bấm được.</p>
                 <div class="mt-2 hair">
@@ -355,7 +309,7 @@
                 </div>
               </article>
 
-              <article class="glass card p-5 md:col-span-2">
+              <article class="panel card p-5 md:col-span-2">
                 <h2 class="h2">Vuốt trên màn hình</h2>
                 <p class="text-[14px] text-soft mt-0.5">Màn hình cảm ứng như điện thoại. Vuốt từ <b>sát mép</b> màn hình vào giữa.</p>
                 <div class="mt-4 flex flex-col sm:flex-row gap-5 sm:items-center">
@@ -380,12 +334,12 @@
                 <p class="text-[13px] text-soft mt-3">Tên menu có thể khác đôi chút tùy phiên bản phần mềm.</p>
               </article>
 
-              <article class="glass card p-5 md:col-span-2">
+              <article class="panel card p-5 md:col-span-2">
                 <h2 class="h2">Các chế độ quay</h2>
                 <p class="text-[14px] text-soft mt-0.5">Chạm vào tên chế độ đang hiện trên màn hình (ví dụ VIDEO), vuốt để chọn chế độ khác.</p>
                 <div class="mt-3 grid gap-2 sm:grid-cols-2">
                   <template x-for="m in modes" :key="m.name">
-                    <div class="rounded-2xl bg-white/70 border border-white px-4 py-3">
+                    <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] px-4 py-3">
                       <p class="text-[15px] font-semibold"><span x-text="m.emoji" class="mr-1.5"></span><span x-text="m.name"></span></p>
                       <p class="text-[14px] text-soft mt-0.5 leading-relaxed" x-text="m.desc"></p>
                     </div>
@@ -393,22 +347,22 @@
                 </div>
               </article>
 
-              <article class="glass card p-5 md:col-span-2">
+              <article class="panel card p-5 md:col-span-2">
                 <h2 class="h2">Pin &amp; thẻ nhớ</h2>
                 <div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  <div class="rounded-2xl bg-white/75 border border-white p-3.5">
+                  <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] p-3.5">
                     <p class="font-round text-[22px] font-extrabold">~4 giờ</p>
                     <p class="text-[12.5px] text-soft leading-snug mt-0.5">quay liên tục ở 1080p (theo DJI)</p>
                   </div>
-                  <div class="rounded-2xl bg-white/75 border border-white p-3.5">
+                  <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] p-3.5">
                     <p class="font-round text-[22px] font-extrabold">~2 giờ</p>
                     <p class="text-[12.5px] text-soft leading-snug mt-0.5">quay ở 4K 60fps</p>
                   </div>
-                  <div class="rounded-2xl bg-white/75 border border-white p-3.5">
+                  <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] p-3.5">
                     <p class="font-round text-[22px] font-extrabold">~30 phút</p>
                     <p class="text-[12.5px] text-soft leading-snug mt-0.5">sạc đầy bằng cục sạc nhanh PD</p>
                   </div>
-                  <div class="rounded-2xl bg-white/75 border border-white p-3.5">
+                  <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] p-3.5">
                     <p class="font-round text-[22px] font-extrabold">U3</p>
                     <p class="text-[12.5px] text-soft leading-snug mt-0.5">thẻ microSD tốc độ U3 trở lên</p>
                   </div>
@@ -420,7 +374,7 @@
             <!-- ---------- Mic Mini 2 ---------- -->
             <div x-show="learnView === 'mic'" x-cloak class="fade-in grid gap-3.5 md:grid-cols-2">
 
-              <article class="glass card p-5">
+              <article class="panel card p-5">
                 <h2 class="h2">Mic gồm những gì?</h2>
                 <div class="mt-2 hair">
                   <template x-for="p in micParts" :key="p.name">
@@ -435,7 +389,7 @@
                 </div>
               </article>
 
-              <article class="glass card p-5">
+              <article class="panel card p-5">
                 <h2 class="h2">Nút trên mic</h2>
                 <div class="mt-2 hair">
                   <template x-for="b in micButtons" :key="b.act">
@@ -447,7 +401,7 @@
                 </div>
               </article>
 
-              <article class="glass card p-5 md:col-span-2">
+              <article class="panel card p-5 md:col-span-2">
                 <h2 class="h2">Đèn trên mic nghĩa là gì?</h2>
                 <p class="text-[14px] text-soft mt-0.5">Nhìn đèn trạng thái trên mặt mic (bộ phát).</p>
                 <div class="mt-2 hair">
@@ -463,18 +417,18 @@
                 </div>
               </article>
 
-              <article class="glass card p-5 md:col-span-2">
+              <article class="panel card p-5 md:col-span-2">
                 <h2 class="h2">Pin &amp; tầm xa</h2>
                 <div class="mt-3 grid grid-cols-3 gap-2">
-                  <div class="rounded-2xl bg-white/75 border border-white p-3">
+                  <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] p-3">
                     <p class="font-round text-[19px] font-extrabold whitespace-nowrap">~11 giờ</p>
                     <p class="text-[12.5px] text-soft leading-snug mt-0.5">mỗi lần sạc đầy mic</p>
                   </div>
-                  <div class="rounded-2xl bg-white/75 border border-white p-3">
+                  <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] p-3">
                     <p class="font-round text-[19px] font-extrabold whitespace-nowrap">~48 giờ</p>
                     <p class="text-[12.5px] text-soft leading-snug mt-0.5">tính cả pin hộp sạc</p>
                   </div>
-                  <div class="rounded-2xl bg-white/75 border border-white p-3">
+                  <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] p-3">
                     <p class="font-round text-[19px] font-extrabold whitespace-nowrap">400 m</p>
                     <p class="text-[12.5px] text-soft leading-snug mt-0.5">tối đa, chỗ thoáng không vật cản</p>
                   </div>
@@ -489,7 +443,7 @@
           ================================================================= -->
           <section x-show="tab === 2" x-cloak class="fade-in grid gap-3.5 md:grid-cols-2">
 
-            <article class="glass card p-5">
+            <article class="panel card p-5">
               <div class="flex items-center gap-3">
                 <span class="tile g-rose"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="13" r="7.5"/><path d="M8.3 14.6c.7.9 1.6 1.4 2.7 1.4s2-.5 2.7-1.4"/><path d="M8.5 11h.01M13.5 11h.01"/><path d="M19 2.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor"/></svg></span>
                 <h2 class="h2">Bật làm đẹp</h2>
@@ -502,7 +456,7 @@
               <p class="text-[13px] text-soft mt-3">Làm đẹp dùng được khi quay video, không áp dụng cho ảnh chụp. Một số hiệu ứng chỉ xem trước được trên app DJI Mimo.</p>
             </article>
 
-            <article class="glass card p-5">
+            <article class="panel card p-5">
               <div class="flex items-center gap-3">
                 <span class="tile g-sage"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><circle cx="12" cy="10.5" r="2.6"/><path d="M7.8 16.5c.9-1.6 2.4-2.4 4.2-2.4s3.3.8 4.2 2.4"/></svg></span>
                 <h2 class="h2">Bám theo khuôn mặt</h2>
@@ -517,12 +471,12 @@
               </div>
             </article>
 
-            <article class="glass card p-5 md:col-span-2">
+            <article class="panel card p-5 md:col-span-2">
               <h2 class="h2">Chọn chất lượng video</h2>
               <p class="text-[14px] text-soft mt-0.5">Vuốt từ dưới lên để chỉnh. Không chắc thì chọn <b class="text-ink">4K 30fps</b>.</p>
               <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2.5">
                 <template x-for="q in quality" :key="q.when">
-                  <div class="rounded-2xl bg-white/75 border border-white p-4">
+                  <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] p-4">
                     <p class="text-[12.5px] font-semibold" :class="q.color" x-text="q.when"></p>
                     <p class="font-round text-[21px] font-extrabold tracking-tight mt-1" x-text="q.set"></p>
                     <p class="text-[13px] text-soft mt-1 leading-snug" x-text="q.why"></p>
@@ -532,7 +486,7 @@
               <p class="text-[13px] text-soft mt-3"><b>fps</b> là số hình mỗi giây. Càng cao thì chuyển động càng mượt nhưng file càng nặng, tốn pin hơn.</p>
             </article>
 
-            <article class="glass card p-5">
+            <article class="panel card p-5">
               <h2 class="h2">Chế độ gimbal</h2>
               <p class="text-[14px] text-soft mt-0.5">Gimbal là phần đầu cam tự xoay để chống rung. Đổi trong menu vuốt xuống.</p>
               <div class="mt-2 hair">
@@ -548,7 +502,7 @@
               </div>
             </article>
 
-            <article class="glass card p-5">
+            <article class="panel card p-5">
               <h2 class="h2">Âm thanh rõ hơn</h2>
               <ul class="mt-3 space-y-3 text-[15px] leading-relaxed">
                 <template x-for="t in audioTips" :key="t">
@@ -557,11 +511,11 @@
               </ul>
             </article>
 
-            <article class="glass card p-5 md:col-span-2">
+            <article class="panel card p-5 md:col-span-2">
               <h2 class="h2">Mẹo quay đẹp cho người mới</h2>
               <div class="mt-3 grid gap-2.5 sm:grid-cols-2">
                 <template x-for="t in shootTips" :key="t.title">
-                  <div class="rounded-2xl bg-white/70 border border-white px-4 py-3.5 flex gap-3">
+                  <div class="rounded-2xl bg-[#F8F3EC] border border-[#EFE6D9] px-4 py-3.5 flex gap-3">
                     <span class="text-[20px] leading-none mt-0.5" x-text="t.emoji"></span>
                     <div>
                       <p class="text-[15px] font-semibold" x-text="t.title"></p>
@@ -582,13 +536,13 @@
                 <p class="section-label mb-2" x-text="grp.name"></p>
                 <div class="space-y-2.5">
                   <template x-for="(f, fi) in grp.items" :key="fi">
-                    <article class="glass card overflow-hidden">
+                    <article class="panel card overflow-hidden">
                       <button class="press w-full flex items-center gap-3 px-4 py-4 text-left"
                               @click="openFaq = openFaq === gi + '-' + fi ? null : gi + '-' + fi" :aria-expanded="openFaq === gi + '-' + fi">
                         <span class="tile sm" :class="grp.grad" x-html="grp.icon"></span>
                         <span class="flex-1 text-[16px] font-semibold" x-text="f.q"></span>
-                        <span class="h-7 w-7 rounded-full bg-white/80 flex items-center justify-center shrink-0 transition-transform duration-300" :class="openFaq === gi + '-' + fi && 'rotate-45'">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C2577A" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                        <span class="h-7 w-7 rounded-full bg-[#F3ECE2] flex items-center justify-center shrink-0 transition-transform duration-300" :class="openFaq === gi + '-' + fi && 'rotate-45'">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A6B4B" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
                         </span>
                       </button>
                       <div x-show="openFaq === gi + '-' + fi" x-collapse.duration.250ms x-cloak>
@@ -602,7 +556,7 @@
 
             <div>
               <p class="section-label mb-2">Giải thích từ ngữ</p>
-              <article class="glass card p-1.5 hair">
+              <article class="panel card p-1.5 hair">
                 <template x-for="w in glossary" :key="w.term">
                   <div class="px-3.5 py-3">
                     <p class="text-[15px] font-semibold" x-text="w.term"></p>
@@ -619,12 +573,12 @@
                TAB 5: CHECKLIST
           ================================================================= -->
           <section x-show="tab === 4" x-cloak class="fade-in grid gap-3.5 md:grid-cols-[240px_1fr] md:items-start">
-            <article class="glass card p-5 flex md:flex-col items-center gap-4 md:text-center md:sticky md:top-0">
+            <article class="panel card p-5 flex md:flex-col items-center gap-4 md:text-center md:sticky md:top-6">
               <div class="relative h-[76px] w-[76px] md:h-[120px] md:w-[120px] shrink-0">
                 <svg viewBox="0 0 64 64" class="h-full w-full -rotate-90">
-                  <circle cx="32" cy="32" r="27" fill="none" stroke="rgba(194,87,122,.12)" stroke-width="6" />
+                  <circle cx="32" cy="32" r="27" fill="none" stroke="rgba(154,107,75,.13)" stroke-width="6" />
                   <circle cx="32" cy="32" r="27" fill="none" stroke-width="6" stroke-linecap="round"
-                          :stroke="allDone ? '#4E9A7A' : '#C2577A'" stroke-dasharray="169.65"
+                          :stroke="allDone ? '#6F8F62' : '#9A6B4B'" stroke-dasharray="169.65"
                           :stroke-dashoffset="169.65 * (1 - doneCount / totalCount)" style="transition: stroke-dashoffset .5s cubic-bezier(.3,1,.4,1), stroke .3s" />
                 </svg>
                 <span class="absolute inset-0 flex items-center justify-center font-round font-extrabold text-[17px] md:text-[24px] tabular-nums"
@@ -634,7 +588,7 @@
                 <p class="font-round text-[18px] font-bold" x-text="allDone ? 'Hoàn thành ✨' : 'Còn ' + (totalCount - doneCount) + ' việc nữa'"></p>
                 <p class="text-[14px] text-soft mt-0.5" x-text="allDone ? 'Bạn đã sẵn sàng!' : 'Chạm vào từng dòng khi đã xong.'"></p>
                 <button x-show="doneCount > 0" x-cloak @click="reset()"
-                        class="press mt-2 rounded-full bg-white/80 px-4 py-1.5 text-[13px] font-semibold text-rose">Làm lại từ đầu</button>
+                        class="press mt-2 rounded-full bg-[#F3ECE2] px-4 py-1.5 text-[13px] font-semibold text-rose">Làm lại từ đầu</button>
               </div>
             </article>
 
@@ -646,15 +600,15 @@
                     <p class="text-[12px] font-semibold tabular-nums" :class="groupDone(grp) === grp.items.length ? 'text-sage' : 'text-soft'"
                        x-text="groupDone(grp) + '/' + grp.items.length"></p>
                   </div>
-                  <article class="glass card overflow-hidden hair">
+                  <article class="panel card overflow-hidden hair">
                     <template x-for="it in grp.items" :key="it.id">
                       <button class="press w-full flex items-center gap-3.5 px-4 py-3.5 text-left" @click="toggle(it.id)" role="checkbox" :aria-checked="!!checked[it.id]">
                         <span class="shrink-0 h-[26px] w-[26px] rounded-full flex items-center justify-center transition-all duration-200"
-                              :class="checked[it.id] ? 'bg-sage pop shadow-[0_2px_8px_-2px_rgba(78,154,122,.6)]' : 'border-2 border-[#D9CCD6] bg-white/60'">
+                              :class="checked[it.id] ? 'bg-rose pop' : 'border-2 border-[#D8CDBE] bg-white/70'">
                           <svg x-show="checked[it.id]" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
                         </span>
                         <span class="flex-1">
-                          <span class="block text-[16px] transition-colors" :class="checked[it.id] ? 'text-soft line-through decoration-[#D9CCD6]' : 'text-ink'" x-text="it.label"></span>
+                          <span class="block text-[16px] transition-colors" :class="checked[it.id] ? 'text-soft line-through decoration-[#D8CDBE]' : 'text-ink'" x-text="it.label"></span>
                           <span x-show="it.hint" class="block text-[13px] text-soft mt-0.5" x-text="it.hint"></span>
                         </span>
                       </button>
@@ -670,7 +624,7 @@
   </div>
 
   <!-- ===== Thanh tab nổi (điện thoại) ===== -->
-  <nav class="dock glass md:hidden" aria-label="Điều hướng">
+  <nav class="dock" aria-label="Điều hướng">
     <div class="relative grid grid-cols-5">
       <div class="indicator" :style="`transform: translateX(${tab * 100}%)`"></div>
       <template x-for="(t, i) in tabs" :key="i">
