@@ -1,8 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#F3EBDF"/>
-  <rect x="196" y="92" width="120" height="196" rx="60" fill="#4A3F36"/>
-  <circle cx="256" cy="162" r="36" fill="#F6F1EA"/>
-  <circle cx="256" cy="162" r="17" fill="#4A3F36"/>
-  <rect x="216" y="270" width="80" height="150" rx="28" fill="#4A3F36"/>
-  <circle cx="256" cy="362" r="17" fill="#C89A6E"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FBE3EA"/><stop offset=".55" stop-color="#F3E6F6"/><stop offset="1" stop-color="#E4DBF7"/>
+    </linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3A2F3D"/><stop offset="1" stop-color="#2A222D"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect x="196" y="92" width="120" height="196" rx="58" fill="url(#body)"/>
+  <circle cx="256" cy="162" r="36" fill="#FBEFF3"/>
+  <circle cx="256" cy="162" r="17" fill="#2A222D"/>
+  <circle cx="263" cy="155" r="5" fill="#FBEFF3" opacity=".8"/>
+  <rect x="216" y="270" width="80" height="150" rx="26" fill="url(#body)"/>
+  <circle cx="256" cy="362" r="17" fill="#E8708F"/>
 </svg>
