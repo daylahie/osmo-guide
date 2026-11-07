@@ -49,7 +49,7 @@
       --glass: rgba(255, 255, 255, .6);
       --glass-border: rgba(255, 255, 255, .85);
       --hairline: rgba(46, 36, 48, .08);
-      --shadow: 0 1px 1px rgba(90, 50, 70, .04), 0 10px 30px -8px rgba(120, 70, 95, .14);
+      --shadow: 0 1px 1px rgba(90, 50, 70, .03), 0 8px 24px -10px rgba(120, 70, 95, .14);
     }
     html, body { background: var(--bg); color: #2E2430; -webkit-tap-highlight-color: transparent; }
     body { -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; min-height: 100vh; }
@@ -70,29 +70,30 @@
       border: 1px solid var(--glass-border);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.9), var(--shadow);
     }
-    .card { border-radius: 22px; }
+    .card { border-radius: 20px; }
     .hair > * + * { border-top: 1px solid var(--hairline); }
-    .h2 { font-family: ui-rounded, "SF Pro Rounded", Nunito, -apple-system, sans-serif; font-size: 17px; font-weight: 700; }
+    .h2 { font-family: ui-rounded, "SF Pro Rounded", Nunito, -apple-system, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -.01em; }
 
-    .tile { width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 2px 6px -2px rgba(0,0,0,.18); }
-    .g-rose  { background: linear-gradient(160deg, #E58AA6, #C2577A); }
-    .g-lilac { background: linear-gradient(160deg, #B39DE8, #8B72C9); }
-    .g-peach { background: linear-gradient(160deg, #F2B27F, #D98A4E); }
-    .g-sky   { background: linear-gradient(160deg, #94B6EA, #5B84C4); }
-    .g-sage  { background: linear-gradient(160deg, #84C5A6, #4E9A7A); }
+    .tile { width: 28px; height: 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .g-rose  { background: #FBE8EE; color: #C2577A; }
+    .g-lilac { background: #EFEAFA; color: #7E66C0; }
+    .g-peach { background: #FCEEE0; color: #C47A3D; }
+    .g-sky   { background: #E8EFFA; color: #4E78BA; }
+    .g-sage  { background: #E4F2EB; color: #3F8A6A; }
 
     /* Hàng tra cứu: thao tác → kết quả */
     .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; font-size: 15px; }
-    .row .k { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 600;
-      background: rgba(255,255,255,.8); border: 1px solid var(--hairline); white-space: nowrap; }
-    .row .v { text-align: right; font-weight: 500; }
-    .tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700;
-      background: #FCF1F4; color: #B04A6C; white-space: nowrap; }
-    .tag.sm { padding: 2px 8px; font-size: 11.5px; }
+    .row .k { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+    .row .k svg { color: #C2577A; flex-shrink: 0; }
+    .row .v { text-align: right; font-size: 14px; color: #5E5262; }
+    .tag { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 8px; border-radius: 999px; font-size: 12.5px; font-weight: 650;
+      background: rgba(255,255,255,.75); color: #8E3F5C; border: 1px solid rgba(194,87,122,.16); white-space: nowrap; }
+    .tag svg { color: #C2577A; }
+    .tag.sm { padding: 2px 8px 2px 6px; font-size: 11.5px; gap: 4px; }
+    .ti { display: inline-flex; vertical-align: -2px; color: #C2577A; margin-right: 3px; }
     .dot { width: 10px; height: 10px; border-radius: 999px; flex-shrink: 0; display: inline-block; }
-    .chip { border-radius: 999px; padding: 6px 12px; font-size: 13.5px; font-weight: 600; border: 1px solid #fff; background: rgba(255,255,255,.75); }
-    .chip.on { background: #C2577A; color: #fff; border-color: #C2577A; }
+    .chip { border-radius: 999px; padding: 6px 13px; font-size: 13.5px; font-weight: 600; border: 1px solid rgba(46,36,48,.06); background: rgba(255,255,255,.7); color: #4A3F4D; transition: background .15s, color .15s; }
+    .chip.on { background: #2E2430; color: #fff; border-color: #2E2430; }
     .field { width: 100%; border-radius: 14px; background: rgba(255,255,255,.85); border: 1px solid var(--hairline); padding: 10px 12px; font-size: 16px; outline: none; }
     .field:focus { border-color: #E58AA6; box-shadow: 0 0 0 3px rgba(194,87,122,.12); }
     .btn { border-radius: 999px; padding: 9px 16px; font-size: 14px; font-weight: 700; }
@@ -205,12 +206,12 @@
         <article class="glass card px-4 py-3">
           <div class="flex flex-wrap gap-x-5 gap-y-2 text-[14px]">
             <template x-for="q in presets" :key="q[0]">
-              <span><b x-text="q[0]"></b> <span class="text-soft" x-text="q[1]"></span></span>
+              <span class="inline-flex items-center gap-1.5"><span class="text-rose" x-show="q[2]" x-html="ico(q[2], 15)"></span><b x-text="q[0]"></b><span class="text-soft" x-text="q[1]"></span></span>
             </template>
           </div>
           <div class="border-t mt-3 pt-3 flex flex-wrap gap-x-5 gap-y-2 text-[14px]" style="border-color: var(--hairline)">
             <template x-for="g in gimbal" :key="g[0]">
-              <span><b x-text="g[0]"></b> <span class="text-soft" x-text="g[1]"></span></span>
+              <span class="inline-flex items-center gap-1.5"><span class="text-rose" x-html="ico(g[2], 15)"></span><b x-text="g[0]"></b><span class="text-soft" x-text="g[1]"></span></span>
             </template>
           </div>
         </article>
@@ -222,7 +223,7 @@
               <div class="mt-1.5 flex flex-wrap gap-1.5">
                 <template x-for="(r, i) in all" :key="g.id + '-' + i">
                   <button x-show="r.group === g.id" class="chip press" :class="recipe === i && !editing && 'on'"
-                          @click="pick(i)" x-text="r.emoji + ' ' + r.name"></button>
+                          @click="pick(i)" x-text="r.group === 'mine' ? r.emoji + ' ' + r.name : r.name"></button>
                 </template>
                 <template x-if="g.id === 'mine'">
                   <button class="chip press !border-dashed !border-rose/40 text-rose" @click="startNew()">+ Thêm</button>
@@ -248,17 +249,20 @@
             </div>
             <div class="mt-3 md:mt-0 flex-1 min-w-0">
               <div class="flex items-start justify-between gap-2">
-                <h2 class="font-round text-[20px] font-extrabold leading-tight" x-text="cur.emoji + ' ' + cur.name"></h2>
+                <div>
+                  <p class="text-[11.5px] font-bold uppercase tracking-wider text-soft" x-text="curGroup.label"></p>
+                  <h2 class="font-round text-[21px] font-extrabold leading-tight mt-0.5" x-text="cur.group === 'mine' ? cur.emoji + ' ' + cur.name : cur.name"></h2>
+                </div>
                 <div x-show="cur.group === 'mine'" class="flex gap-1.5 shrink-0">
                   <button class="btn press bg-white/80 !py-1.5 !px-3 text-[13px]" @click="startEdit()">Sửa</button>
                 </div>
               </div>
               <div class="mt-2.5 flex flex-wrap gap-1.5">
-                <template x-for="t in cur.tags" :key="t"><span class="tag" x-text="t"></span></template>
+                <template x-for="t in cur.tags" :key="t"><span class="tag" x-html="tagHtml(t)"></span></template>
               </div>
               <ul class="mt-3 space-y-1.5 text-[15px]">
                 <template x-for="t in cur.tips" :key="t">
-                  <li class="flex gap-2"><span class="mt-[9px] h-1.5 w-1.5 rounded-full bg-rose/60 shrink-0"></span><span x-html="t"></span></li>
+                  <li class="flex gap-2"><span class="mt-[9px] h-1.5 w-1.5 rounded-full bg-rose/60 shrink-0"></span><span x-html="tip(t)"></span></li>
                 </template>
               </ul>
               <div x-show="cur.plan" class="mt-4">
@@ -275,14 +279,14 @@
                         <template x-for="sh in st.shots" :key="sh"><li class="flex gap-1.5"><span class="text-soft">–</span><span x-text="sh"></span></li></template>
                       </ul>
                       <div class="mt-1.5 flex flex-wrap gap-1">
-                        <template x-for="t in st.set" :key="t"><span class="tag sm" x-text="t"></span></template>
+                        <template x-for="t in st.set" :key="t"><span class="tag sm" x-html="tagHtml(t)"></span></template>
                       </div>
                     </li>
                   </template>
                 </ol>
               </div>
               <button x-show="cur.city" class="mt-3 btn press bg-white/80 text-rose text-[13.5px] !py-2" @click="seeLight(cur.city)">
-                ☀️ Giờ vàng ở <span x-text="cityName(cur.city)"></span>
+                <span class="inline-flex items-center gap-1.5"><span x-html="ico('sun', 15)"></span>Giờ vàng ở <span x-text="cityName(cur.city)"></span></span>
               </button>
             </div>
           </div>
@@ -290,7 +294,7 @@
             <p class="text-[12px] font-bold uppercase tracking-wider text-soft">Mẹo chung</p>
             <ul class="mt-1.5 space-y-1 text-[14px] text-ink/85">
               <template x-for="t in (curGroup.tips || [])" :key="t">
-                <li class="flex gap-2"><span class="text-rose">·</span><span x-html="t"></span></li>
+                <li class="flex gap-2"><span class="text-rose">·</span><span x-html="tip(t)"></span></li>
               </template>
             </ul>
           </div>
@@ -346,10 +350,10 @@
         <article class="glass card p-4">
           <div class="flex items-center gap-2">
             <select class="field !py-2 flex-1 min-w-0" x-model="cityKey" @change="store('osmo-guide:city', cityKey)">
-              <template x-if="here"><option value="here">📍 Vị trí của tôi</option></template>
+              <template x-if="here"><option value="here">Vị trí của tôi</option></template>
               <template x-for="c in cities" :key="c.key"><option :value="c.key" x-text="c.name" :selected="c.key === cityKey"></option></template>
             </select>
-            <button class="btn press bg-white/80 shrink-0 !px-3" @click="locate()" :disabled="locating" x-text="locating ? '…' : '📍'" title="Dùng vị trí của tôi"></button>
+            <button class="btn press bg-white/80 shrink-0 !px-3" @click="locate()" :disabled="locating" x-html="locating ? '…' : ico('pin', 18)" title="Dùng vị trí của tôi" class="text-rose"></button>
           </div>
           <p x-show="geoError" class="text-[13px] text-rose mt-2" x-text="geoError"></p>
 
@@ -384,8 +388,8 @@
               </div>
             </template>
             <div class="row text-soft text-[14px]">
-              <span>🌅 Mọc <b class="text-ink tabular-nums" x-text="sun.rise"></b></span>
-              <span>🌇 Lặn <b class="text-ink tabular-nums" x-text="sun.set"></b></span>
+              <span class="inline-flex items-center gap-1.5"><span x-html="ico('sunrise', 16)"></span>Mọc <b class="text-ink tabular-nums" x-text="sun.rise"></b></span>
+              <span class="inline-flex items-center gap-1.5"><span x-html="ico('sunset', 16)"></span>Lặn <b class="text-ink tabular-nums" x-text="sun.set"></b></span>
             </div>
           </div>
         </article>
@@ -443,6 +447,63 @@
       sun:     '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
       help:    '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.3"/><path d="M12 17h.01"/>',
     };
+
+    /* ---------- Bộ icon nét mảnh, vẽ theo ý nghĩa ký hiệu trên máy ---------- */
+    const I = {
+      portrait:  '<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/>',
+      landscape: '<rect x="3" y="7" width="18" height="10" rx="2.5"/><path d="M18 11v2"/>',
+      follow:    '<circle cx="12" cy="12" r="3.2"/><path d="M5 9.5a7.5 7.5 0 0 1 4-4.3M19 14.5a7.5 7.5 0 0 1-4 4.3"/><path d="M8.6 3.6l.6 1.7-1.7.6M15.4 20.4l-.6-1.7 1.7-.6"/>',
+      tilt:      '<circle cx="12" cy="10" r="3.2"/><path d="M3 10h3.5M17.5 10H21"/><rect x="9.5" y="16" width="5" height="4.5" rx="1"/><path d="M10.5 16v-1a1.5 1.5 0 0 1 3 0v1"/>',
+      fpv:       '<rect x="4.5" y="6.5" width="15" height="11" rx="2.5" transform="rotate(-14 12 12)"/><circle cx="12" cy="12" r="2.4"/>',
+      slow:      '<circle cx="12" cy="13.5" r="7"/><path d="M9.5 3h5M12 3v3.5M12 13.5V10.5"/><path d="M12 13.5l2.2 1.6" />',
+      lowlight:  '<path d="M19.5 14.5A7.8 7.8 0 1 1 9.5 4.5a6.3 6.3 0 0 0 10 10z"/><path d="M17 4.5l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5z"/>',
+      timelapse: '<circle cx="12" cy="12" r="8.5" stroke-dasharray="1.6 2.4"/><path d="M12 7.5V12l3 1.8"/>',
+      hyperlapse:'<circle cx="10" cy="12" r="6.5"/><path d="M10 8.8V12l2 1.4M17.5 7.5L21 12l-3.5 4.5"/>',
+      pano:      '<path d="M3 7.5c6 2 12 2 18 0v9c-6-2-12-2-18 0z"/><path d="M8 13l2.5-2.5L13 13l2-1.5 2 1.5"/>',
+      zoom:      '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20.5 20.5M8 10.5h5M10.5 8v5"/>',
+      face:      '<circle cx="11" cy="13" r="7"/><path d="M8.6 14.6c.7.8 1.5 1.2 2.4 1.2s1.7-.4 2.4-1.2M9 11.5h.01M13 11.5h.01"/><path d="M19 2.8l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4L17 4.8l1.4-.6z"/>',
+      mic:       '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>',
+      noise:     '<path d="M3 12h2.5l2-5 3 10 3-12 3 9 1.5-2H21"/>',
+      track:     '<path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><circle cx="12" cy="10.3" r="2.4"/><path d="M8 16.5c.9-1.6 2.3-2.4 4-2.4s3.1.8 4 2.4"/>',
+      flip:      '<path d="M12 3v18" stroke-dasharray="2 2.2"/><path d="M9 7.5L4.5 12 9 16.5zM15 7.5l4.5 4.5-4.5 4.5z"/>',
+      joystick:  '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3" fill="currentColor"/>',
+      rec:       '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.6" fill="#E5484D" stroke="none"/>',
+      rotate:    '<rect x="8.5" y="3" width="7" height="12" rx="2"/><path d="M4.5 13.5a8 8 0 0 0 14 5M18.5 21.5v-3h-3"/>',
+      custom:    '<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M14.6 9.4a3.4 3.4 0 1 0 0 5.2"/>',
+      lock:      '<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+      swDown:    '<rect x="5.5" y="3" width="13" height="18" rx="3"/><path d="M12 6.5v7.5M9.3 11.3L12 14l2.7-2.7"/>',
+      swUp:      '<rect x="5.5" y="3" width="13" height="18" rx="3"/><path d="M12 17.5V10M9.3 12.7L12 10l2.7 2.7"/>',
+      swRight:   '<rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M6.5 12H14M11.3 9.3L14 12l-2.7 2.7"/>',
+      swLeft:    '<rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M17.5 12H10M12.7 9.3L10 12l2.7 2.7"/>',
+      palm:      '<path d="M8 12.5V5.5a1.5 1.5 0 0 1 3 0V11M11 10.5V4a1.5 1.5 0 0 1 3 0v6.5M14 10.5V5.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-.5a6 6 0 0 1-4.8-2.4L3.5 15.5a1.5 1.5 0 0 1 2.3-1.9L8 15.5"/>',
+      vsign:     '<path d="M9 12.5L6.5 4.2a1.4 1.4 0 0 1 2.7-.8L11.5 11M13 11l2.3-7.6a1.4 1.4 0 0 1 2.7.8L15.5 12.5"/><path d="M7.5 12.5h10v2.5a6 6 0 0 1-6 6h-.5a4.5 4.5 0 0 1-4.5-4.5v-1.5a2.5 2.5 0 0 1 1-2.5z"/>',
+      power:     '<path d="M12 3v8"/><path d="M6.3 7.2a8 8 0 1 0 11.4 0"/>',
+      link:      '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+      box:       '<rect x="3" y="8" width="18" height="12" rx="3"/><path d="M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/>',
+      phone:     '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
+      clock:     '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+      camera:    '<rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="12" cy="13.5" r="3.5"/><path d="M9 7l1.5-3h3L15 7"/>',
+      palette:   '<path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.5 0-1.2-1-1.5-1-2.5 0-.8.7-1.5 1.5-1.5H17a4 4 0 0 0 4-4c0-4.7-4-8.5-9-8.5z"/><circle cx="7.5" cy="11" r=".8"/><circle cx="10.5" cy="7.5" r=".8"/><circle cx="15" cy="8" r=".8"/>',
+      music:     '<path d="M9 18V5.5l11-2V16"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',
+      leaf:      '<path d="M5 19C5 10 11 5 20 5c0 9-5 15-14 15"/><path d="M5 19l8-8"/>',
+      temp:      '<path d="M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0z"/><path d="M12 10v6"/>',
+      sun:       '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+      alert:     '<path d="M12 3.5l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',
+      pin:       '<path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+      sunrise:   '<path d="M3 18h18M6.5 14.5a5.5 5.5 0 0 1 11 0M12 3.5v5M9.5 6L12 3.5 14.5 6"/>',
+      sunset:    '<path d="M3 18h18M6.5 14.5a5.5 5.5 0 0 1 11 0M12 3.5v5M9.5 6L12 8.5 14.5 6"/>',
+      tripod:    '<rect x="8.5" y="2.5" width="7" height="4.5" rx="1.2"/><path d="M12 7v5M12 12l-6 9M12 12l6 9M12 12v9"/>',
+      down:      '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v8M8.8 12.5L12 15.7l3.2-3.2"/>',
+      people:    '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0M14 19.5a4 4 0 0 1 7 0"/>',
+    };
+    const ico = (k, s = 14, w = 1.8) => I[k] ? svg(I[k], s, w) : '';
+    const K = (k, t) => `${ico(k, 15)}<span>${t}</span>`;
+    const TAG_ICONS = [[/^Dọc/, 'portrait'], [/^Ngang/, 'landscape'], [/Follow/, 'follow'], [/Tilt/, 'tilt'], [/FPV/, 'fpv'],
+      [/Slow/, 'slow'], [/Low-Light/, 'lowlight'], [/Timelapse/, 'timelapse'], [/Hyperlapse/, 'hyperlapse'], [/Panorama/, 'pano'],
+      [/Zoom/, 'zoom'], [/làm đẹp/i, 'face'], [/Khử ồn/, 'noise'], [/mic/i, 'mic'], [/Joystick/, 'flip'], [/Cố định/, 'tripod'], [/nhìn xuống/, 'down']];
+    const tagHtml = t => { const m = TAG_ICONS.find(([r]) => r.test(t)); const e = String(t).replace(/</g, '&lt;'); return m ? `${ico(m[1], 13, 2)}<span>${e}</span>` : `<span>${e}</span>`; };
+    const EMO = [['⏰', 'clock'], ['🎬', 'camera'], ['🎨', 'palette'], ['🎵', 'music'], ['🍂', 'leaf'], ['🧥', 'temp'], ['📲', 'phone'], ['🌤️', 'sun'], ['🌾', 'leaf'], ['🎙️', 'mic'], ['⚠️', 'alert']];
+    const tipHtml = t => EMO.reduce((a, [e, k]) => a.split(e).join(`<span class="ti">${ico(k, 14, 1.9)}</span>`), String(t));
 
     /* ---------- Vị trí mặt trời (công thức thiên văn chuẩn, tính offline) ---------- */
     const SUN = (() => {
@@ -557,40 +618,41 @@
         newTag: '',
         formError: '',
         ic: Object.fromEntries(Object.entries(P).map(([k, d]) => [k, svg(d)])),
+        ico, tagHtml, tip: tipHtml,
 
         tabs: [
-          { label: 'Điều khiển', title: 'Điều khiển', glyph: svg(P.bolt, 22, 1.8) },
-          { label: 'Công thức',  title: 'Công thức quay', glyph: svg(P.film, 22, 1.8) },
-          { label: 'Giờ đẹp',    title: 'Giờ vàng · Giờ xanh', glyph: svg(P.sun, 22, 1.8) },
-          { label: 'Sửa lỗi',    title: 'Sửa lỗi nhanh', glyph: svg(P.help, 22, 1.8) },
+          { label: 'Điều khiển', title: 'Điều khiển', glyph: svg(P.bolt, 21, 1.6) },
+          { label: 'Công thức',  title: 'Công thức quay', glyph: svg(P.film, 21, 1.6) },
+          { label: 'Giờ đẹp',    title: 'Giờ vàng · Giờ xanh', glyph: svg(P.sun, 21, 1.6) },
+          { label: 'Sửa lỗi',    title: 'Sửa lỗi nhanh', glyph: svg(P.help, 21, 1.6) },
         ],
 
         /* ---------- Điều khiển ---------- */
         camButtons: [
-          ['Xoay màn hình', 'Bật / tắt máy'],
-          ['<span class="dot" style="background:#E5484D"></span>Nút đỏ', 'Quay / dừng'],
-          ['Joystick <span class="text-rose">×2</span>', 'Căn giữa cam'],
-          ['Joystick <span class="text-rose">×3</span>', 'Lật cam (selfie)'],
-          ['Giữ Joystick', 'Khóa hướng cam'],
-          ['Zoom <span class="text-rose">×1</span> / <span class="text-rose">×2</span>', '2x / 4x'],
-          ['Nút tùy chỉnh', 'Tự gán chức năng'],
+          [K('rotate', 'Xoay màn hình'), 'Bật / tắt máy'],
+          [K('rec', 'Nút đỏ'), 'Quay / dừng'],
+          [K('joystick', 'Joystick <b class="text-rose">×2</b>'), 'Căn giữa cam'],
+          [K('joystick', 'Joystick <b class="text-rose">×3</b>'), 'Lật cam (selfie)'],
+          [K('lock', 'Giữ Joystick'), 'Khóa hướng cam'],
+          [K('zoom', 'Zoom <b class="text-rose">×1</b> / <b class="text-rose">×2</b>'), '2x / 4x'],
+          [K('custom', 'Nút tùy chỉnh'), 'Tự gán chức năng'],
         ],
         gestures: [
-          ['↓ Vuốt từ trên', 'Gimbal, Wi-Fi, cài đặt'],
-          ['↑ Vuốt từ dưới', 'Độ phân giải, fps, tỉ lệ'],
-          ['→ Vuốt từ trái', 'Xem lại'],
-          ['← Vuốt từ phải', 'Làm đẹp, màu, mic'],
-          ['Chạm đúp', 'ActiveTrack (× để tắt)'],
-          ['✋ Lòng bàn tay', 'Bật / tắt bám theo'],
-          ['✌️ Chữ V', 'Quay / dừng (0,5–5 m)'],
-          ['↓ › Selfie Flip', 'Lật hình khi quay cam trước'],
+          [K('swDown', 'Vuốt từ trên'), 'Gimbal, Wi-Fi, cài đặt'],
+          [K('swUp', 'Vuốt từ dưới'), 'Độ phân giải, fps, tỉ lệ'],
+          [K('swRight', 'Vuốt từ trái'), 'Xem lại'],
+          [K('swLeft', 'Vuốt từ phải'), 'Làm đẹp, màu, mic'],
+          [K('track', 'Chạm đúp'), 'ActiveTrack (× để tắt)'],
+          [K('palm', 'Lòng bàn tay'), 'Bật / tắt bám theo'],
+          [K('vsign', 'Chữ V'), 'Quay / dừng (0,5–5 m)'],
+          [K('flip', 'Selfie Flip'), 'Vuốt ↓ › bật / tắt'],
         ],
         micButtons: [
-          ['Lấy khỏi hộp', 'Tự bật, tự kết nối'],
-          ['Đúp nút nguồn', 'Bật / tắt khử ồn'],
-          ['Giữ nguồn 2s', 'Bật / tắt'],
-          ['Giữ Linking 2s', 'Ghép máy mới'],
-          ['Với điện thoại', 'Cắm bộ thu'],
+          [K('box', 'Lấy khỏi hộp'), 'Tự bật, tự kết nối'],
+          [K('noise', 'Đúp nút nguồn'), 'Bật / tắt khử ồn'],
+          [K('power', 'Giữ nguồn 2s'), 'Bật / tắt'],
+          [K('link', 'Giữ Linking 2s'), 'Ghép máy mới'],
+          [K('phone', 'Với điện thoại'), 'Cắm bộ thu'],
         ],
         leds: [
           ['background:#3B82F6', 'Xanh dương', 'Nối thẳng Pocket / điện thoại'],
@@ -618,19 +680,19 @@
 
         /* ---------- Công thức ---------- */
         presets: [
-          ['4K30', 'hằng ngày'], ['4K60', 'chuyển động'], ['4K24', 'chất phim'], ['Slow Motion', 'quay chậm'], ['Low-Light', 'trời tối'],
+          ['4K30', 'hằng ngày', ''], ['4K60', 'chuyển động', ''], ['4K24', 'chất phim', ''], ['Slow Motion', 'quay chậm', 'slow'], ['Low-Light', 'trời tối', 'lowlight'],
         ],
         gimbal: [
-          ['Follow', 'mặc định'], ['Tilt Locked', 'đi bộ'], ['FPV', 'nghiêng theo tay'],
+          ['Follow', 'mặc định', 'follow'], ['Tilt Locked', 'đi bộ', 'tilt'], ['FPV', 'nghiêng theo tay', 'fpv'],
         ],
         groups: [
-          { id: 'mine', label: '⭐ Của tôi' },
-          { id: 'beauty', label: '💄 Beauty TikTok', tips: [
+          { id: 'mine', label: 'Của tôi' },
+          { id: 'beauty', label: 'Beauty TikTok', tips: [
             'Video 15–45 giây, hook trong 3 giây đầu',
             'Chừa trống phía dưới và bên phải cho chữ, nút của TikTok (vùng tối trong hình minh họa)',
             'Ghi rõ sản phẩm được tặng hay tự mua',
           ]},
-          { id: 'trip', label: '✈️ Chuyến đi sắp tới', tips: [
+          { id: 'trip', label: 'Chuyến đi sắp tới', tips: [
             '4K24, mỗi cảnh giữ 5–8 giây, máy đứng yên hoặc lia thật chậm',
             'Giờ vàng, giờ xanh (xem tab Giờ đẹp). Có tiền cảnh để tạo chiều sâu',
             'Đủ 3 cỡ cảnh: toàn, trung, cận chi tiết',
@@ -868,7 +930,7 @@
           else if (this.dayOff === 1) { status = 'Ngày mai'; sub = `${name(list[0])} đầu tiên lúc ${this.fmt(list[0].a)}`; }
           else {
             const act = list.find(s => s.active), next = list.find(s => s.a > now);
-            if (act) { status = `Đang ${name(act).toLowerCase()} ✨`; sub = `Còn ${this.dur(act.b - now)}, tới ${this.fmt(act.b)}`; }
+            if (act) { status = `Đang ${name(act).toLowerCase()}`; sub = `Còn ${this.dur(act.b - now)}, tới ${this.fmt(act.b)}`; }
             else if (next) { status = `${name(next)} sau ${this.dur(next.a - now)}`; sub = `Bắt đầu lúc ${this.fmt(next.a)}`; }
             else { const tm = this.dayTimes(1).list[0]; status = 'Hết giờ đẹp hôm nay'; sub = tm ? `${name(tm)} sáng mai lúc ${this.fmt(tm.a)}` : ''; }
           }
