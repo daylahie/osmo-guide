@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Osmo Guide</title>
   <meta name="description" content="Bảng tra nhanh DJI Osmo Pocket 4 và DJI Mic Mini 2" />
+  <meta name="color-scheme" content="light dark" />
 
   <!-- PWA / iOS -->
-  <meta name="theme-color" content="#FAF1F1" />
+  <meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -16,415 +18,387 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
-  <!-- Font bo tròn dự phòng cho máy không có SF Pro Rounded -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
-
   <script src="https://cdn.tailwindcss.com/3.4.16"></script>
   <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
-            round: ['ui-rounded', '"SF Pro Rounded"', 'Nunito', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-          },
-          colors: {
-            ink: '#2E2430',
-            soft: '#7C6F80',
-            rose: { DEFAULT: '#C2577A', 50: '#FCF1F4', 100: '#F8E1E8' },
-            lilac: { DEFAULT: '#8B72C9', 50: '#F4F0FC' },
-            sage: { DEFAULT: '#4E9A7A', 50: '#EAF5EF' },
-          },
-        },
-      },
-    };
+    tailwind.config = { theme: { extend: { colors: { ink: 'var(--label)', soft: 'var(--label2)', tint: 'var(--tint)' } } } };
   </script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 
   <style>
+    /* Màu hệ thống iOS / macOS */
     :root {
-      --bg: #FAF1F1;
-      --glass: rgba(255, 255, 255, .6);
-      --glass-border: rgba(255, 255, 255, .85);
-      --hairline: rgba(46, 36, 48, .08);
-      --shadow: 0 1px 1px rgba(90, 50, 70, .03), 0 8px 24px -10px rgba(120, 70, 95, .14);
+      --bg: #F2F2F7; --card: #FFFFFF; --label: #000000; --label2: rgba(60,60,67,.6); --label3: rgba(60,60,67,.3);
+      --sep: rgba(60,60,67,.2); --fill: rgba(120,120,128,.12); --fill2: rgba(120,120,128,.08);
+      --tint: #007AFF; --bar: rgba(250,250,252,.82); --segon: #FFFFFF;
     }
-    html, body { background: var(--bg); color: #2E2430; -webkit-tap-highlight-color: transparent; }
-    body { -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; min-height: 100vh; }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000; --card: #1C1C1E; --label: #FFFFFF; --label2: rgba(235,235,245,.6); --label3: rgba(235,235,245,.3);
+        --sep: rgba(84,84,88,.65); --fill: rgba(118,118,128,.24); --fill2: rgba(118,118,128,.16);
+        --tint: #0A84FF; --bar: rgba(36,36,38,.78); --segon: #636366;
+      }
+    }
+    html, body { background: var(--bg); color: var(--label); -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased; min-height: 100vh; font-size: 17px; letter-spacing: -.01em; }
     [x-cloak] { display: none !important; }
+    b { font-weight: 600; }
 
-    /* Nền màu mềm phía sau lớp kính */
-    .backdrop { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
-      background: linear-gradient(180deg, #FBF4F3 0%, #F7EEF4 55%, #F3EEF8 100%); }
-    .blob { position: absolute; border-radius: 999px; filter: blur(60px); opacity: .75; }
-    .blob.a { width: 340px; height: 340px; background: #F7CFDB; top: -90px; left: -80px; }
-    .blob.b { width: 300px; height: 300px; background: #DED3F6; top: 30%; right: -110px; }
-    .blob.c { width: 280px; height: 280px; background: #FBE0CF; bottom: -80px; left: 10%; }
+    .pt-safe { padding-top: max(env(safe-area-inset-top), 12px); }
+    .pb-dock { padding-bottom: calc(env(safe-area-inset-bottom) + 100px); }
+    .title { font-size: 34px; line-height: 41px; font-weight: 700; letter-spacing: .01em; }
+    .sub { font-size: 15px; color: var(--label2); }
 
-    .glass {
-      background: var(--glass);
-      -webkit-backdrop-filter: blur(28px) saturate(170%);
-      backdrop-filter: blur(28px) saturate(170%);
-      border: 1px solid var(--glass-border);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.9), var(--shadow);
+    /* Nhóm danh sách kiểu Cài đặt */
+    .sh { font-size: 13px; text-transform: uppercase; color: var(--label2); padding: 22px 16px 7px; letter-spacing: 0; }
+    .foot { font-size: 13px; color: var(--label2); padding: 8px 16px 0; line-height: 1.4; }
+    .list { background: var(--card); border-radius: 12px; overflow: hidden; }
+    .cell { display: flex; align-items: center; gap: 12px; padding-left: 14px; min-height: 44px; }
+    .cell-body { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 14px 10px 0; border-bottom: .5px solid var(--sep); }
+    .cell:last-child > .cell-body { border-bottom: 0; }
+    .cell-title { font-size: 16px; }
+    .cell-value { font-size: 15px; color: var(--label2); text-align: right; }
+    .cell-sub { font-size: 14px; color: var(--label2); line-height: 1.35; margin-top: 2px; }
+    .inset { padding: 14px 16px; }
+
+    /* Ô icon bo tròn màu pastel */
+    .tile { width: 29px; height: 29px; border-radius: 7.5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .tile.num { font-size: 14px; font-weight: 600; }
+    .g-rose   { background: #FFDDE6; color: #D63964; }
+    .g-red    { background: #FFDCD9; color: #D7372B; }
+    .g-peach  { background: #FFE6CF; color: #C96A16; }
+    .g-yellow { background: #FFF0C2; color: #A57900; }
+    .g-sage   { background: #D6F2DE; color: #2D8A4E; }
+    .g-teal   { background: #D2F0EE; color: #19807C; }
+    .g-sky    { background: #DCEBFF; color: #2D6FD8; }
+    .g-lilac  { background: #E8E0FC; color: #7652D6; }
+    .g-gray   { background: #E9E9EE; color: #5D5D66; }
+    @media (prefers-color-scheme: dark) {
+      .g-rose { background: rgba(255,105,150,.22); color: #FF8FB0; } .g-red { background: rgba(255,90,80,.22); color: #FF8A80; }
+      .g-peach { background: rgba(255,160,80,.22); color: #FFB37A; } .g-yellow { background: rgba(255,214,10,.2); color: #FFD966; }
+      .g-sage { background: rgba(48,209,88,.2); color: #7EE0A0; } .g-teal { background: rgba(64,200,224,.2); color: #7FDCE6; }
+      .g-sky { background: rgba(10,132,255,.24); color: #8CC2FF; } .g-lilac { background: rgba(170,130,255,.24); color: #C5B0FF; }
+      .g-gray { background: rgba(142,142,147,.26); color: #C7C7CC; }
     }
-    .card { border-radius: 20px; }
-    .hair > * + * { border-top: 1px solid var(--hairline); }
-    .h2 { font-family: ui-rounded, "SF Pro Rounded", Nunito, -apple-system, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -.01em; }
+    .dot { width: 11px; height: 11px; border-radius: 999px; flex-shrink: 0; display: inline-block; }
 
-    .tile { width: 28px; height: 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .g-rose  { background: #FBE8EE; color: #C2577A; }
-    .g-lilac { background: #EFEAFA; color: #7E66C0; }
-    .g-peach { background: #FCEEE0; color: #C47A3D; }
-    .g-sky   { background: #E8EFFA; color: #4E78BA; }
-    .g-sage  { background: #E4F2EB; color: #3F8A6A; }
-
-    /* Hàng tra cứu: thao tác → kết quả */
-    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; font-size: 15px; }
-    .row .k { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; white-space: nowrap; }
-    .row .k svg { color: #C2577A; flex-shrink: 0; }
-    .row .v { text-align: right; font-size: 14px; color: #5E5262; }
-    .tag { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 8px; border-radius: 999px; font-size: 12.5px; font-weight: 650;
-      background: rgba(255,255,255,.75); color: #8E3F5C; border: 1px solid rgba(194,87,122,.16); white-space: nowrap; }
-    .tag svg { color: #C2577A; }
-    .tag.sm { padding: 2px 8px 2px 6px; font-size: 11.5px; gap: 4px; }
-    .ti { display: inline-flex; vertical-align: -2px; color: #C2577A; margin-right: 3px; }
-    .dot { width: 10px; height: 10px; border-radius: 999px; flex-shrink: 0; display: inline-block; }
-    .chip { border-radius: 999px; padding: 6px 13px; font-size: 13.5px; font-weight: 600; border: 1px solid rgba(46,36,48,.06); background: rgba(255,255,255,.7); color: #4A3F4D; transition: background .15s, color .15s; }
-    .chip.on { background: #2E2430; color: #fff; border-color: #2E2430; }
-    .field { width: 100%; border-radius: 14px; background: rgba(255,255,255,.85); border: 1px solid var(--hairline); padding: 10px 12px; font-size: 16px; outline: none; }
-    .field:focus { border-color: #E58AA6; box-shadow: 0 0 0 3px rgba(194,87,122,.12); }
-    .btn { border-radius: 999px; padding: 9px 16px; font-size: 14px; font-weight: 700; }
+    /* Nút, thẻ, ô chọn */
+    .pill { padding: 7px 14px; border-radius: 999px; background: var(--card); font-size: 15px; color: var(--label); transition: background .15s, color .15s; }
+    .pill.on { background: var(--tint); color: #fff; }
+    .pill.add { color: var(--tint); }
+    .tag { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 8px; border-radius: 999px; font-size: 13px; font-weight: 500;
+      background: var(--fill); color: var(--label); white-space: nowrap; }
+    .tag svg { color: var(--tint); }
+    .tag.sm { padding: 2px 8px 2px 6px; font-size: 12px; gap: 4px; }
+    .ti { display: inline-flex; vertical-align: -2px; color: var(--label2); margin-right: 3px; }
+    .link { color: var(--tint); font-size: 16px; }
+    .btn { border-radius: 12px; padding: 11px 16px; font-size: 16px; font-weight: 600; }
+    .btn.primary { background: var(--tint); color: #fff; }
+    .btn.plain { background: var(--fill); color: var(--tint); }
+    .field { width: 100%; border-radius: 10px; background: var(--fill2); padding: 10px 12px; font-size: 16px; color: var(--label); outline: none; }
+    .field::placeholder { color: var(--label3); }
+    .seg { display: flex; background: var(--fill); border-radius: 9px; padding: 2px; }
+    .seg button { flex: 1; padding: 6px 10px; border-radius: 7px; font-size: 13px; font-weight: 600; color: var(--label); display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+    .seg button.on { background: var(--segon); box-shadow: 0 3px 8px rgba(0,0,0,.12), 0 1px 1px rgba(0,0,0,.04); }
 
     /* Minh họa khung hình */
     .shot { position: relative; height: 172px; display: flex; justify-content: center; }
-    .shot svg, .shot img { height: 100%; width: auto; max-width: 100%; border-radius: 12px; box-shadow: 0 6px 18px -8px rgba(60,30,50,.35); object-fit: cover; }
-    .shot .ratio { position: absolute; top: 6px; font-size: 10.5px; font-weight: 800; color: #fff; background: rgba(46,36,48,.45);
-      padding: 2px 6px; border-radius: 6px; letter-spacing: .02em; }
+    .shot svg, .shot img { height: 100%; width: auto; max-width: 100%; border-radius: 10px; object-fit: cover; }
+    .shot .ratio { position: absolute; top: 6px; font-size: 10.5px; font-weight: 700; color: #fff; background: rgba(0,0,0,.4); padding: 2px 6px; border-radius: 6px; }
 
     /* Thanh thời gian giờ vàng */
-    .timeline { position: relative; height: 14px; border-radius: 999px; background: #F6EFD9; overflow: hidden; }
-    .timeline .seg { position: absolute; top: 0; bottom: 0; }
-    .timeline .now { position: absolute; top: -3px; bottom: -3px; width: 3px; border-radius: 3px; background: #C2577A; box-shadow: 0 0 0 2px #fff; }
+    .timeline { position: relative; height: 12px; border-radius: 999px; background: var(--fill); overflow: hidden; }
+    .timeline .seg-t { position: absolute; top: 0; bottom: 0; }
+    .timeline .now { position: absolute; top: -2px; bottom: -2px; width: 3px; border-radius: 3px; background: var(--tint); box-shadow: 0 0 0 2px var(--card); }
 
-    .fade-in { animation: fade .25s ease-out; }
-    @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-    .press { transition: transform .15s ease; }
-    .press:active { transform: scale(.97); }
+    .fade-in { animation: fade .2s ease-out; }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    .press { transition: opacity .15s; }
+    .press:active { opacity: .55; }
 
-    /* Thanh tab nổi */
+    /* Thanh tab nổi (Liquid Glass iOS) */
     .dock { position: fixed; z-index: 30; left: 50%; transform: translateX(-50%);
-      bottom: calc(env(safe-area-inset-bottom) + 12px); width: min(420px, calc(100% - 24px)); border-radius: 999px; padding: 5px; }
-    .dock .indicator { position: absolute; top: 0; bottom: 0; left: 0; width: 25%; border-radius: 999px;
-      background: rgba(255,255,255,.92); box-shadow: 0 2px 10px -2px rgba(194,87,122,.28), inset 0 0 0 1px rgba(194,87,122,.08);
-      transition: transform .35s cubic-bezier(.3,1.25,.4,1); }
-
-    .pt-safe { padding-top: max(env(safe-area-inset-top), 16px); }
-    .pb-dock { padding-bottom: calc(env(safe-area-inset-bottom) + 104px); }
+      bottom: calc(env(safe-area-inset-bottom) + 10px); width: min(400px, calc(100% - 24px)); border-radius: 999px; padding: 4px;
+      background: var(--bar); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%);
+      box-shadow: 0 8px 28px rgba(0,0,0,.14), inset 0 0 0 .5px rgba(255,255,255,.25); }
+    .dock .indicator { position: absolute; top: 0; bottom: 0; left: 0; width: 25%; border-radius: 999px; background: var(--fill);
+      transition: transform .3s cubic-bezier(.3,1.2,.4,1); }
 
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
   </style>
 </head>
 
-<body class="font-sans" x-data="app()" x-init="init()">
-  <div class="backdrop" aria-hidden="true"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div></div>
-
-  <div class="relative z-10 mx-auto w-full max-w-3xl">
-    <header class="pt-safe md:pt-10 px-5 pb-3">
-      <p class="text-[13px] font-semibold text-rose pt-2">Osmo Pocket 4 · Mic Mini 2</p>
-      <h1 class="font-round text-[30px] md:text-[34px] leading-tight font-extrabold tracking-tight mt-1" x-text="tabs[tab].title"></h1>
+<body x-data="app()" x-init="init()">
+  <div class="mx-auto w-full max-w-3xl">
+    <header class="pt-safe px-5 md:pt-10">
+      <h1 class="title" x-text="tabs[tab].title"></h1>
+      <p class="sub">Osmo Pocket 4 · Mic Mini 2</p>
     </header>
 
     <main class="px-4 pb-dock">
 
-      <!-- ================= TAB 1: ĐIỀU KHIỂN ================= -->
-      <section x-show="tab === 0" x-cloak class="fade-in grid gap-3 md:grid-cols-2 md:items-start">
-
-        <article class="glass card px-4 py-3">
-          <h2 class="h2 flex items-center gap-2 pt-1 pb-1"><span class="tile g-rose" x-html="ic.cam"></span>Nút bấm</h2>
-          <div class="hair">
-            <template x-for="r in camButtons" :key="r[0]">
-              <div class="row"><span class="k" x-html="r[0]"></span><span class="v" x-text="r[1]"></span></div>
-            </template>
-          </div>
-        </article>
-
-        <article class="glass card px-4 py-3">
-          <h2 class="h2 flex items-center gap-2 pt-1 pb-1"><span class="tile g-lilac" x-html="ic.hand"></span>Màn hình &amp; cử chỉ</h2>
-          <div class="hair">
-            <template x-for="r in gestures" :key="r[0]">
-              <div class="row"><span class="k" x-html="r[0]"></span><span class="v" x-text="r[1]"></span></div>
-            </template>
-          </div>
-        </article>
-
-        <article class="glass card px-4 py-3">
-          <h2 class="h2 flex items-center gap-2 pt-1 pb-1"><span class="tile g-sky" x-html="ic.mic"></span>Mic Mini 2</h2>
-          <div class="hair">
-            <template x-for="r in micButtons" :key="r[0]">
-              <div class="row"><span class="k" x-html="r[0]"></span><span class="v" x-text="r[1]"></span></div>
-            </template>
-          </div>
-        </article>
-
-        <article class="glass card px-4 py-3">
-          <h2 class="h2 flex items-center gap-2 pt-1 pb-1"><span class="tile g-sage" x-html="ic.led"></span>Đèn mic</h2>
-          <div class="hair">
+      <!-- ================= ĐIỀU KHIỂN ================= -->
+      <section x-show="tab === 0" x-cloak class="fade-in grid md:grid-cols-2 md:gap-x-6 md:items-start">
+        <div><p class="sh">Nút bấm</p>
+            <div class="list">
+              <template x-for="r in camButtons" :key="r[2]">
+                <div class="cell"><span class="tile" :class="r[1]" x-html="ico(r[0], 17, 2)"></span>
+                  <div class="cell-body"><span class="cell-title" x-text="r[2]"></span><span class="cell-value" x-text="r[3]"></span></div></div>
+              </template>
+            </div></div>
+        <div><p class="sh">Màn hình &amp; cử chỉ</p>
+            <div class="list">
+              <template x-for="r in gestures" :key="r[2]">
+                <div class="cell"><span class="tile" :class="r[1]" x-html="ico(r[0], 17, 2)"></span>
+                  <div class="cell-body"><span class="cell-title" x-text="r[2]"></span><span class="cell-value" x-text="r[3]"></span></div></div>
+              </template>
+            </div></div>
+        <div><p class="sh">Mic Mini 2</p>
+            <div class="list">
+              <template x-for="r in micButtons" :key="r[2]">
+                <div class="cell"><span class="tile" :class="r[1]" x-html="ico(r[0], 17, 2)"></span>
+                  <div class="cell-body"><span class="cell-title" x-text="r[2]"></span><span class="cell-value" x-text="r[3]"></span></div></div>
+              </template>
+            </div></div>
+        <div><p class="sh">Đèn mic</p>
+          <div class="list">
             <template x-for="l in leds" :key="l[1]">
-              <div class="row"><span class="flex items-center gap-2.5"><span class="dot" :style="l[0]"></span><span x-text="l[1]"></span></span><span class="v text-soft" x-text="l[2]"></span></div>
+              <div class="cell"><span class="tile g-gray"><span class="dot" :style="l[0]"></span></span>
+                <div class="cell-body"><span class="cell-title" x-text="l[1]"></span><span class="cell-value" x-text="l[2]"></span></div></div>
             </template>
           </div>
-        </article>
-
-        <article class="glass card px-4 py-3">
-          <h2 class="h2 flex items-center gap-2 pt-1 pb-2"><span class="tile g-peach" x-html="ic.star"></span>Lần đầu dùng</h2>
-          <ol class="space-y-1.5 text-[15px] pb-1">
+        </div>
+        <div><p class="sh">Lần đầu dùng</p>
+          <div class="list">
             <template x-for="(t, i) in firstUse" :key="i">
-              <li class="flex gap-2.5"><span class="text-rose font-bold w-4 shrink-0" x-text="i + 1"></span><span x-html="t"></span></li>
-            </template>
-          </ol>
-        </article>
-
-        <article class="glass card px-4 py-3">
-          <h2 class="h2 flex items-center gap-2 pt-1 pb-2"><span class="tile g-rose" x-html="ic.battery"></span>Thông số</h2>
-          <div class="grid grid-cols-2 gap-2 pb-1">
-            <template x-for="s in specs" :key="s[1]">
-              <div class="rounded-2xl bg-white/70 border border-white px-3 py-2">
-                <p class="font-round text-[18px] font-extrabold leading-tight" x-text="s[0]"></p>
-                <p class="text-[12.5px] text-soft leading-snug" x-text="s[1]"></p>
-              </div>
+              <div class="cell"><span class="tile num g-gray" x-text="i + 1"></span>
+                <div class="cell-body"><span class="cell-title" x-html="t"></span></div></div>
             </template>
           </div>
-        </article>
+        </div>
+        <div><p class="sh">Thông số</p>
+            <div class="list">
+              <template x-for="r in specs" :key="r[2]">
+                <div class="cell"><span class="tile" :class="r[1]" x-html="ico(r[0], 17, 2)"></span>
+                  <div class="cell-body"><span class="cell-title" x-text="r[2]"></span><span class="cell-value" x-text="r[3]"></span></div></div>
+              </template>
+            </div></div>
       </section>
 
-      <!-- ================= TAB 2: CÔNG THỨC ================= -->
-      <section x-show="tab === 1" x-cloak class="fade-in space-y-3">
+      <!-- ================= CÔNG THỨC ================= -->
+      <section x-show="tab === 1" x-cloak class="fade-in">
+        <p class="sh">Thông số nhanh</p>
+        <div class="list inset flex flex-wrap gap-x-4 gap-y-2 text-[15px]">
+          <template x-for="q in presets" :key="q[0]">
+            <span class="inline-flex items-center gap-1.5"><span class="text-tint" x-show="q[2]" x-html="ico(q[2], 16)"></span><b x-text="q[0]"></b><span class="text-soft" x-text="q[1]"></span></span>
+          </template>
+          <template x-for="g in gimbal" :key="g[0]">
+            <span class="inline-flex items-center gap-1.5"><span class="text-tint" x-html="ico(g[2], 16)"></span><b x-text="g[0]"></b><span class="text-soft" x-text="g[1]"></span></span>
+          </template>
+        </div>
 
-        <article class="glass card px-4 py-3">
-          <div class="flex flex-wrap gap-x-5 gap-y-2 text-[14px]">
-            <template x-for="q in presets" :key="q[0]">
-              <span class="inline-flex items-center gap-1.5"><span class="text-rose" x-show="q[2]" x-html="ico(q[2], 15)"></span><b x-text="q[0]"></b><span class="text-soft" x-text="q[1]"></span></span>
-            </template>
+        <template x-for="g in groups" :key="g.id">
+          <div>
+            <p class="sh" x-text="g.label"></p>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="(r, i) in all" :key="g.id + '-' + i">
+                <button x-show="r.group === g.id" class="pill press" :class="recipe === i && !editing && 'on'"
+                        @click="pick(i)" x-text="r.group === 'mine' ? r.emoji + ' ' + r.name : r.name"></button>
+              </template>
+              <template x-if="g.id === 'mine'"><button class="pill add press" @click="startNew()">+ Thêm</button></template>
+            </div>
           </div>
-          <div class="border-t mt-3 pt-3 flex flex-wrap gap-x-5 gap-y-2 text-[14px]" style="border-color: var(--hairline)">
-            <template x-for="g in gimbal" :key="g[0]">
-              <span class="inline-flex items-center gap-1.5"><span class="text-rose" x-html="ico(g[2], 15)"></span><b x-text="g[0]"></b><span class="text-soft" x-text="g[1]"></span></span>
-            </template>
-          </div>
-        </article>
+        </template>
 
-        <article class="glass card p-4 space-y-3">
-          <template x-for="g in groups" :key="g.id">
+        <!-- Chi tiết công thức -->
+        <div x-show="!editing">
+          <p class="sh" x-text="curGroup.label"></p>
+          <div class="list inset">
+            <div class="md:flex md:gap-6 md:items-start">
+              <div class="md:w-[300px] md:shrink-0" x-show="cur.img || cur.scene">
+                <div class="shot">
+                  <template x-if="cur.img"><img :src="cur.img" alt="Ảnh tham khảo" /></template>
+                  <template x-if="!cur.img && cur.scene"><span class="contents" x-html="scene(cur.scene)"></span></template>
+                  <span class="ratio" x-show="!cur.img && cur.scene" x-text="sceneRatio(cur.scene)"></span>
+                </div>
+                <div x-show="cur.palette" class="mt-2.5 flex items-center justify-center gap-1.5">
+                  <span class="text-[12px] text-soft mr-1">Màu dựng</span>
+                  <template x-for="c in (cur.palette || [])" :key="c"><span class="h-3.5 w-6 rounded-full" :style="`background:${c}`"></span></template>
+                </div>
+              </div>
+              <div class="mt-4 md:mt-0 flex-1 min-w-0">
+                <div class="flex items-start justify-between gap-2">
+                  <h2 class="text-[22px] font-bold leading-tight" x-text="cur.group === 'mine' ? cur.emoji + ' ' + cur.name : cur.name"></h2>
+                  <button x-show="cur.group === 'mine'" class="link press shrink-0" @click="startEdit()">Sửa</button>
+                </div>
+                <div class="mt-2.5 flex flex-wrap gap-1.5">
+                  <template x-for="t in cur.tags" :key="t"><span class="tag" x-html="tagHtml(t)"></span></template>
+                </div>
+                <ul class="mt-3 space-y-1.5 text-[15px] leading-snug">
+                  <template x-for="t in cur.tips" :key="t">
+                    <li class="flex gap-2"><span class="text-soft">•</span><span x-html="tip(t)"></span></li>
+                  </template>
+                </ul>
+
+                <div x-show="cur.plan" class="mt-5">
+                  <p class="text-[13px] uppercase text-soft">Lịch quay</p>
+                  <ol class="mt-2.5 ml-1.5 space-y-4" style="border-left: 1.5px solid var(--sep)">
+                    <template x-for="st in (cur.plan || [])" :key="st.place">
+                      <li class="relative pl-4">
+                        <span class="absolute -left-[7px] top-[4px] h-3 w-3 rounded-full" style="box-shadow: 0 0 0 2px var(--card)"
+                              :style="`background:${st.kind === 'gold' ? '#F5A524' : st.kind === 'blue' ? '#3B82F6' : 'var(--label3)'}`"></span>
+                        <p class="text-[13px] font-semibold tabular-nums" :style="`color:${st.kind === 'gold' ? '#D08A00' : st.kind === 'blue' ? 'var(--tint)' : 'var(--label2)'}`"
+                           x-text="st.time + (st.kind === 'gold' ? ' · Giờ vàng' : st.kind === 'blue' ? ' · Giờ xanh' : '')"></p>
+                        <p class="text-[16px] font-semibold leading-snug mt-0.5" x-text="st.place"></p>
+                        <ul class="mt-1 space-y-0.5 text-[14.5px] text-soft leading-snug">
+                          <template x-for="sh in st.shots" :key="sh"><li class="flex gap-1.5"><span>–</span><span x-text="sh"></span></li></template>
+                        </ul>
+                        <div class="mt-1.5 flex flex-wrap gap-1">
+                          <template x-for="t in st.set" :key="t"><span class="tag sm" x-html="tagHtml(t)"></span></template>
+                        </div>
+                      </li>
+                    </template>
+                  </ol>
+                </div>
+                <button x-show="cur.city" class="link press mt-4 inline-flex items-center gap-1.5" @click="seeLight(cur.city)">
+                  <span x-html="ico('sun', 17)"></span>Giờ vàng ở <span x-text="cityName(cur.city)"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <template x-if="curGroup.tips">
             <div>
-              <p class="text-[12px] font-bold uppercase tracking-wider text-soft" x-text="g.label"></p>
-              <div class="mt-1.5 flex flex-wrap gap-1.5">
-                <template x-for="(r, i) in all" :key="g.id + '-' + i">
-                  <button x-show="r.group === g.id" class="chip press" :class="recipe === i && !editing && 'on'"
-                          @click="pick(i)" x-text="r.group === 'mine' ? r.emoji + ' ' + r.name : r.name"></button>
-                </template>
-                <template x-if="g.id === 'mine'">
-                  <button class="chip press !border-dashed !border-rose/40 text-rose" @click="startNew()">+ Thêm</button>
-                </template>
+              <p class="sh">Mẹo chung</p>
+              <div class="list inset">
+                <ul class="space-y-1.5 text-[15px] leading-snug">
+                  <template x-for="t in curGroup.tips" :key="t"><li class="flex gap-2"><span class="text-soft">•</span><span x-html="tip(t)"></span></li></template>
+                </ul>
               </div>
             </div>
           </template>
-        </article>
-
-        <!-- Chi tiết công thức -->
-        <article x-show="!editing" class="glass card p-4">
-          <div class="md:flex md:gap-5 md:items-start">
-            <div class="md:w-[300px] md:shrink-0">
-              <div class="shot" x-show="cur.img || cur.scene">
-                <template x-if="cur.img"><img :src="cur.img" alt="Ảnh tham khảo" /></template>
-                <template x-if="!cur.img && cur.scene"><span class="contents" x-html="scene(cur.scene)"></span></template>
-                <span class="ratio" x-show="!cur.img && cur.scene" x-text="sceneRatio(cur.scene)"></span>
-              </div>
-              <div x-show="cur.palette" class="mt-2.5 flex items-center justify-center gap-1.5">
-                <span class="text-[12px] text-soft mr-1">🎨 Màu dựng</span>
-                <template x-for="c in (cur.palette || [])" :key="c"><span class="h-4 w-7 rounded-full border border-white shadow-sm" :style="`background:${c}`"></span></template>
-              </div>
-            </div>
-            <div class="mt-3 md:mt-0 flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-2">
-                <div>
-                  <p class="text-[11.5px] font-bold uppercase tracking-wider text-soft" x-text="curGroup.label"></p>
-                  <h2 class="font-round text-[21px] font-extrabold leading-tight mt-0.5" x-text="cur.group === 'mine' ? cur.emoji + ' ' + cur.name : cur.name"></h2>
-                </div>
-                <div x-show="cur.group === 'mine'" class="flex gap-1.5 shrink-0">
-                  <button class="btn press bg-white/80 !py-1.5 !px-3 text-[13px]" @click="startEdit()">Sửa</button>
-                </div>
-              </div>
-              <div class="mt-2.5 flex flex-wrap gap-1.5">
-                <template x-for="t in cur.tags" :key="t"><span class="tag" x-html="tagHtml(t)"></span></template>
-              </div>
-              <ul class="mt-3 space-y-1.5 text-[15px]">
-                <template x-for="t in cur.tips" :key="t">
-                  <li class="flex gap-2"><span class="mt-[9px] h-1.5 w-1.5 rounded-full bg-rose/60 shrink-0"></span><span x-html="tip(t)"></span></li>
-                </template>
-              </ul>
-              <div x-show="cur.plan" class="mt-4">
-                <p class="text-[12px] font-bold uppercase tracking-wider text-soft">Lịch quay</p>
-                <ol class="mt-2.5 ml-1.5 space-y-3.5 border-l-2" style="border-color: rgba(194,87,122,.22)">
-                  <template x-for="st in (cur.plan || [])" :key="st.place">
-                    <li class="relative pl-4">
-                      <span class="absolute -left-[8px] top-[3px] h-3.5 w-3.5 rounded-full border-2 border-white shadow-sm"
-                            :style="`background:${st.kind === 'gold' ? '#F4B860' : st.kind === 'blue' ? '#5B84C4' : '#E58AA6'}`"></span>
-                      <p class="text-[12.5px] font-bold tabular-nums" :class="st.kind === 'gold' ? 'text-[#C98A1F]' : st.kind === 'blue' ? 'text-[#4A6FB0]' : 'text-rose'"
-                         x-text="st.time + (st.kind === 'gold' ? ' · Giờ vàng' : st.kind === 'blue' ? ' · Giờ xanh' : '')"></p>
-                      <p class="text-[15.5px] font-semibold leading-snug mt-0.5" x-text="st.place"></p>
-                      <ul class="mt-1 space-y-0.5 text-[14px] text-ink/85">
-                        <template x-for="sh in st.shots" :key="sh"><li class="flex gap-1.5"><span class="text-soft">–</span><span x-text="sh"></span></li></template>
-                      </ul>
-                      <div class="mt-1.5 flex flex-wrap gap-1">
-                        <template x-for="t in st.set" :key="t"><span class="tag sm" x-html="tagHtml(t)"></span></template>
-                      </div>
-                    </li>
-                  </template>
-                </ol>
-              </div>
-              <button x-show="cur.city" class="mt-3 btn press bg-white/80 text-rose text-[13.5px] !py-2" @click="seeLight(cur.city)">
-                <span class="inline-flex items-center gap-1.5"><span x-html="ico('sun', 15)"></span>Giờ vàng ở <span x-text="cityName(cur.city)"></span></span>
-              </button>
-            </div>
-          </div>
-          <div x-show="curGroup.tips" class="mt-4 rounded-2xl bg-white/60 border border-white px-3.5 py-3">
-            <p class="text-[12px] font-bold uppercase tracking-wider text-soft">Mẹo chung</p>
-            <ul class="mt-1.5 space-y-1 text-[14px] text-ink/85">
-              <template x-for="t in (curGroup.tips || [])" :key="t">
-                <li class="flex gap-2"><span class="text-rose">·</span><span x-html="tip(t)"></span></li>
-              </template>
-            </ul>
-          </div>
-        </article>
+        </div>
 
         <!-- Form công thức của tôi -->
-        <article x-show="editing" x-cloak class="glass card p-4 space-y-3.5">
-          <h2 class="font-round text-[19px] font-extrabold" x-text="editing && editing.id ? 'Sửa công thức' : 'Công thức mới'"></h2>
+        <div x-show="editing" x-cloak>
+          <p class="sh" x-text="editing && editing.id ? 'Sửa công thức' : 'Công thức mới'"></p>
           <template x-if="editing">
-            <div class="space-y-3.5">
+            <div class="list inset space-y-3.5">
               <div class="flex flex-wrap gap-1.5">
                 <template x-for="e in emojis" :key="e">
-                  <button class="h-9 w-9 rounded-xl text-[18px] press" :class="editing.emoji === e ? 'bg-rose-100 ring-2 ring-rose/50' : 'bg-white/70'" @click="editing.emoji = e" x-text="e"></button>
+                  <button class="h-9 w-9 rounded-[10px] text-[18px] press" :style="editing.emoji === e ? 'background: var(--fill); box-shadow: inset 0 0 0 2px var(--tint)' : 'background: var(--fill2)'" @click="editing.emoji = e" x-text="e"></button>
                 </template>
               </div>
               <input class="field" x-model="editing.name" placeholder="Tên, ví dụ: Review son kem" maxlength="40" />
               <div>
-                <p class="text-[12px] font-bold uppercase tracking-wider text-soft mb-1.5">Thông số</p>
+                <p class="text-[13px] uppercase text-soft mb-1.5">Thông số</p>
                 <div class="flex flex-wrap gap-1.5">
                   <template x-for="t in [...tagChoices, ...editing.tags.filter(x => !tagChoices.includes(x))]" :key="t">
-                    <button class="chip press !py-1 !text-[13px]" :class="editing.tags.includes(t) && 'on'" @click="toggleTag(t)" x-text="t"></button>
+                    <button class="tag press" :style="editing.tags.includes(t) ? 'background: var(--tint); color: #fff' : ''" @click="toggleTag(t)" x-text="t"></button>
                   </template>
                 </div>
                 <input class="field mt-2" x-model="newTag" @keydown.enter.prevent="addTag()" placeholder="Thông số khác, ví dụ: Đèn 5600K (Enter để thêm)" maxlength="30" />
               </div>
               <textarea class="field" rows="3" x-model="editing.notes" placeholder="Ghi chú, mỗi dòng một ý"></textarea>
               <div class="flex items-center gap-3">
-                <label class="btn press bg-white/80 text-[13.5px] cursor-pointer">
-                  📷 <span x-text="editing.img ? 'Đổi ảnh' : 'Thêm ảnh tham khảo'"></span>
+                <label class="btn plain press cursor-pointer !text-[15px] !py-2">
+                  <span x-text="editing.img ? 'Đổi ảnh' : 'Thêm ảnh tham khảo'"></span>
                   <input type="file" accept="image/*" class="hidden" @change="pickImage($event)" />
                 </label>
                 <template x-if="editing.img">
                   <div class="flex items-center gap-2">
-                    <img :src="editing.img" class="h-12 w-12 rounded-lg object-cover" alt="" />
-                    <button class="text-[13px] text-soft underline" @click="editing.img = null">Bỏ ảnh</button>
+                    <img :src="editing.img" class="h-11 w-11 rounded-lg object-cover" alt="" />
+                    <button class="link press !text-[14px]" @click="editing.img = null">Bỏ ảnh</button>
                   </div>
                 </template>
               </div>
-              <p x-show="formError" class="text-[13px] text-rose" x-text="formError"></p>
+              <p x-show="formError" class="text-[14px]" style="color:#FF3B30" x-text="formError"></p>
               <div class="flex items-center gap-2 pt-1">
-                <button class="btn press bg-rose text-white disabled:opacity-40" :disabled="!editing.name.trim()" @click="saveMine()">Lưu</button>
-                <button class="btn press bg-white/80" @click="cancelEdit()">Hủy</button>
-                <button x-show="editing.id" class="btn press text-rose ml-auto" @click="deleteMine()">Xóa</button>
+                <button class="btn primary press disabled:opacity-40" :disabled="!editing.name.trim()" @click="saveMine()">Lưu</button>
+                <button class="btn plain press" @click="cancelEdit()">Hủy</button>
+                <button x-show="editing.id" class="link press ml-auto" style="color:#FF3B30" @click="deleteMine()">Xóa</button>
               </div>
-              <p class="text-[12px] text-soft">Lưu trên máy này, không đồng bộ sang máy khác.</p>
             </div>
           </template>
-        </article>
+          <p class="foot">Lưu trên máy này, không đồng bộ sang máy khác.</p>
+        </div>
       </section>
 
-      <!-- ================= TAB 3: GIỜ ĐẸP ================= -->
-      <section x-show="tab === 2" x-cloak class="fade-in space-y-3">
-        <article class="glass card p-4">
-          <div class="flex items-center gap-2">
-            <select class="field !py-2 flex-1 min-w-0" x-model="cityKey" @change="store('osmo-guide:city', cityKey)">
-              <template x-if="here"><option value="here">Vị trí của tôi</option></template>
-              <template x-for="c in cities" :key="c.key"><option :value="c.key" x-text="c.name" :selected="c.key === cityKey"></option></template>
-            </select>
-            <button class="btn press bg-white/80 shrink-0 !px-3" @click="locate()" :disabled="locating" x-html="locating ? '…' : ico('pin', 18)" title="Dùng vị trí của tôi" class="text-rose"></button>
-          </div>
-          <p x-show="geoError" class="text-[13px] text-rose mt-2" x-text="geoError"></p>
+      <!-- ================= GIỜ ĐẸP ================= -->
+      <section x-show="tab === 2" x-cloak class="fade-in md:max-w-xl">
+        <div class="seg mt-4">
+          <template x-for="c in cities" :key="c.key">
+            <button :class="cityKey === c.key && 'on'" @click="cityKey = c.key; store('osmo-guide:city', c.key)" x-text="cityName(c.key)"></button>
+          </template>
+          <button :class="cityKey === 'here' && 'on'" @click="locate()"><span x-html="locating ? '…' : ico('pin', 14, 2)"></span>Vị trí</button>
+        </div>
+        <p x-show="geoError" class="foot" style="color:#FF3B30" x-text="geoError"></p>
 
-          <div class="mt-4 flex items-end justify-between gap-3">
+        <p class="sh" x-text="dayOff === 0 ? 'Hôm nay' : 'Ngày mai'"></p>
+        <div class="list inset">
+          <div class="flex items-start justify-between gap-3">
             <div>
-              <p class="font-round text-[22px] font-extrabold leading-tight" x-text="sun.status"></p>
-              <p class="text-[14px] text-soft mt-0.5" x-text="sun.sub"></p>
+              <p class="text-[22px] font-bold leading-tight" x-text="sun.status"></p>
+              <p class="text-[15px] text-soft mt-0.5" x-text="sun.sub"></p>
             </div>
-            <div class="seg flex rounded-full bg-white/70 p-1 text-[13px] font-semibold shrink-0">
-              <button class="px-3 py-1 rounded-full" :class="dayOff === 0 ? 'bg-white shadow text-rose' : 'text-soft'" @click="dayOff = 0">Hôm nay</button>
-              <button class="px-3 py-1 rounded-full" :class="dayOff === 1 ? 'bg-white shadow text-rose' : 'text-soft'" @click="dayOff = 1">Mai</button>
+            <div class="seg shrink-0 w-[150px] whitespace-nowrap">
+              <button :class="dayOff === 0 && 'on'" @click="dayOff = 0">Hôm nay</button>
+              <button :class="dayOff === 1 && 'on'" @click="dayOff = 1">Mai</button>
             </div>
           </div>
-
           <div class="mt-4">
             <div class="timeline">
-              <div class="seg" :style="`left:0;width:${sun.nightL}%;background:#2E3555`"></div>
-              <div class="seg" :style="`left:${sun.nightR}%;right:0;background:#2E3555`"></div>
+              <div class="seg-t" :style="`left:0;width:${sun.nightL}%;background:#2C3350`"></div>
+              <div class="seg-t" :style="`left:${sun.nightR}%;right:0;background:#2C3350`"></div>
               <template x-for="(s, i) in sun.list" :key="i">
-                <div class="seg" :style="`left:${s.l}%;width:${s.w}%;background:${s.kind === 'gold' ? '#F4B860' : '#5B84C4'}`"></div>
+                <div class="seg-t" :style="`left:${s.l}%;width:${s.w}%;background:${s.kind === 'gold' ? '#F5A524' : '#3B82F6'}`"></div>
               </template>
               <div x-show="dayOff === 0" class="now" :style="`left: calc(${sun.nowPct}% - 1.5px)`"></div>
             </div>
             <div class="flex justify-between text-[11px] text-soft mt-1"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>24h</span></div>
           </div>
+        </div>
 
-          <div class="mt-3 hair">
-            <template x-for="(s, i) in sun.list" :key="'r' + i">
-              <div class="row" :class="s.active && 'font-bold'">
-                <span class="flex items-center gap-2.5"><span class="dot" :style="`background:${s.kind === 'gold' ? '#F4B860' : '#5B84C4'}`"></span><span x-text="s.label"></span></span>
-                <span class="v tabular-nums" x-text="s.range"></span>
-              </div>
-            </template>
-            <div class="row text-soft text-[14px]">
-              <span class="inline-flex items-center gap-1.5"><span x-html="ico('sunrise', 16)"></span>Mọc <b class="text-ink tabular-nums" x-text="sun.rise"></b></span>
-              <span class="inline-flex items-center gap-1.5"><span x-html="ico('sunset', 16)"></span>Lặn <b class="text-ink tabular-nums" x-text="sun.set"></b></span>
-            </div>
-          </div>
-        </article>
-        <p class="text-[12px] text-soft text-center px-6">Giờ địa phương tại nơi chọn. Giờ vàng: mặt trời thấp, ánh sáng ấm. Giờ xanh: ngay trước bình minh và sau hoàng hôn.</p>
+        <div class="list mt-4">
+          <template x-for="(s, i) in sun.list" :key="'r' + i">
+            <div class="cell"><span class="tile" :class="s.kind === 'gold' ? 'g-yellow' : 'g-sky'"><span class="dot" :style="`background:${s.kind === 'gold' ? '#F5A524' : '#3B82F6'}`"></span></span>
+              <div class="cell-body"><span class="cell-title" :class="s.active && 'font-semibold'" x-text="s.label"></span><span class="cell-value tabular-nums" x-text="s.range"></span></div></div>
+          </template>
+          <div class="cell"><span class="tile g-peach" x-html="ico('sunrise', 17, 2)"></span>
+            <div class="cell-body"><span class="cell-title">Mặt trời mọc</span><span class="cell-value tabular-nums" x-text="sun.rise"></span></div></div>
+          <div class="cell"><span class="tile g-lilac" x-html="ico('sunset', 17, 2)"></span>
+            <div class="cell-body"><span class="cell-title">Mặt trời lặn</span><span class="cell-value tabular-nums" x-text="sun.set"></span></div></div>
+        </div>
+        <p class="foot">Giờ địa phương tại nơi chọn. Giờ vàng: mặt trời thấp, ánh sáng ấm. Giờ xanh: ngay trước bình minh và sau hoàng hôn.</p>
       </section>
 
-      <!-- ================= TAB 4: SỬA LỖI ================= -->
-      <section x-show="tab === 3" x-cloak class="fade-in grid gap-3 md:grid-cols-2 md:items-start">
+      <!-- ================= SỬA LỖI ================= -->
+      <section x-show="tab === 3" x-cloak class="fade-in grid md:grid-cols-2 md:gap-x-6 md:items-start">
         <template x-for="grp in fixes" :key="grp.name">
-          <article class="glass card px-4 py-3">
-            <h2 class="h2 flex items-center gap-2 pt-1 pb-1"><span class="tile" :class="grp.grad" x-html="ic[grp.icon]"></span><span x-text="grp.name"></span></h2>
-            <div class="hair">
+          <div>
+            <p class="sh" x-text="grp.name"></p>
+            <div class="list">
               <template x-for="f in grp.items" :key="f[0]">
-                <div class="py-2.5">
-                  <p class="text-[15px] font-semibold" x-text="f[0]"></p>
-                  <p class="text-[14px] text-soft leading-snug mt-0.5" x-html="f[1]"></p>
-                </div>
+                <div class="cell !items-start"><span class="tile mt-[11px]" :class="grp.grad" x-html="ico(grp.icon, 17, 2)"></span>
+                  <div class="cell-body !block"><p class="cell-title font-semibold" x-text="f[0]"></p><p class="cell-sub" x-html="f[1]"></p></div></div>
               </template>
             </div>
-          </article>
+          </div>
         </template>
-        <p class="md:col-span-2 text-[12px] text-soft text-center px-6">Theo hướng dẫn của DJI. Tên menu có thể khác đôi chút tùy phiên bản phần mềm.</p>
+        <p class="foot md:col-span-2">Theo hướng dẫn của DJI. Tên menu có thể khác đôi chút tùy phiên bản phần mềm.</p>
       </section>
     </main>
   </div>
 
   <!-- ===== Thanh tab nổi ===== -->
-  <nav class="dock glass" aria-label="Điều hướng">
+  <nav class="dock" aria-label="Điều hướng">
     <div class="relative grid grid-cols-4">
       <div class="indicator" :style="`transform: translateX(${tab * 100}%)`"></div>
       <template x-for="(t, i) in tabs" :key="i">
-        <button @click="go(i)" class="relative z-10 flex flex-col items-center gap-0.5 py-2 rounded-full transition-colors"
-                :class="tab === i ? 'text-rose' : 'text-soft'" :aria-current="tab === i ? 'page' : null">
+        <button @click="go(i)" class="relative z-10 flex flex-col items-center gap-0.5 pt-1.5 pb-1 rounded-full"
+                :style="`color: ${tab === i ? 'var(--tint)' : 'var(--label)'}`" :aria-current="tab === i ? 'page' : null">
           <span x-html="t.glyph"></span>
-          <span class="text-[11px] font-semibold whitespace-nowrap" x-text="t.label"></span>
+          <span class="text-[10px] font-medium whitespace-nowrap" x-text="t.label"></span>
         </button>
       </template>
     </div>
@@ -494,6 +468,9 @@
       sunset:    '<path d="M3 18h18M6.5 14.5a5.5 5.5 0 0 1 11 0M12 3.5v5M9.5 6L12 8.5 14.5 6"/>',
       tripod:    '<rect x="8.5" y="2.5" width="7" height="4.5" rx="1.2"/><path d="M12 7v5M12 12l-6 9M12 12l6 9M12 12v9"/>',
       down:      '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v8M8.8 12.5L12 15.7l3.2-3.2"/>',
+      battery:   '<rect x="2.5" y="7" width="17" height="10" rx="2.5"/><path d="M22 10.5v3M6 10v4"/>',
+      bolt:      '<path d="M13 2.5L4.5 13.5H12l-1 8 8.5-11H12z"/>',
+      drop:      '<path d="M12 3s6.5 7 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 10 12 3 12 3z"/>',
       people:    '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0M14 19.5a4 4 0 0 1 7 0"/>',
     };
     const ico = (k, s = 14, w = 1.8) => I[k] ? svg(I[k], s, w) : '';
@@ -621,38 +598,38 @@
         ico, tagHtml, tip: tipHtml,
 
         tabs: [
-          { label: 'Điều khiển', title: 'Điều khiển', glyph: svg(P.bolt, 21, 1.6) },
-          { label: 'Công thức',  title: 'Công thức quay', glyph: svg(P.film, 21, 1.6) },
-          { label: 'Giờ đẹp',    title: 'Giờ vàng · Giờ xanh', glyph: svg(P.sun, 21, 1.6) },
-          { label: 'Sửa lỗi',    title: 'Sửa lỗi nhanh', glyph: svg(P.help, 21, 1.6) },
+          { label: 'Điều khiển', title: 'Điều khiển', glyph: svg(P.bolt, 24, 1.7) },
+          { label: 'Công thức',  title: 'Công thức quay', glyph: svg(P.film, 24, 1.7) },
+          { label: 'Giờ đẹp',    title: 'Giờ vàng · Giờ xanh', glyph: svg(P.sun, 24, 1.7) },
+          { label: 'Sửa lỗi',    title: 'Sửa lỗi nhanh', glyph: svg(P.help, 24, 1.7) },
         ],
 
         /* ---------- Điều khiển ---------- */
         camButtons: [
-          [K('rotate', 'Xoay màn hình'), 'Bật / tắt máy'],
-          [K('rec', 'Nút đỏ'), 'Quay / dừng'],
-          [K('joystick', 'Joystick <b class="text-rose">×2</b>'), 'Căn giữa cam'],
-          [K('joystick', 'Joystick <b class="text-rose">×3</b>'), 'Lật cam (selfie)'],
-          [K('lock', 'Giữ Joystick'), 'Khóa hướng cam'],
-          [K('zoom', 'Zoom <b class="text-rose">×1</b> / <b class="text-rose">×2</b>'), '2x / 4x'],
-          [K('custom', 'Nút tùy chỉnh'), 'Tự gán chức năng'],
+          ['rotate', 'g-sky', 'Xoay màn hình', 'Bật / tắt máy'],
+          ['rec', 'g-red', 'Nút đỏ', 'Quay / dừng'],
+          ['joystick', 'g-gray', 'Joystick ×2', 'Căn giữa cam'],
+          ['joystick', 'g-gray', 'Joystick ×3', 'Lật cam (selfie)'],
+          ['lock', 'g-yellow', 'Giữ Joystick', 'Khóa hướng cam'],
+          ['zoom', 'g-sage', 'Zoom ×1 / ×2', '2x / 4x'],
+          ['custom', 'g-lilac', 'Nút tùy chỉnh', 'Tự gán chức năng'],
         ],
         gestures: [
-          [K('swDown', 'Vuốt từ trên'), 'Gimbal, Wi-Fi, cài đặt'],
-          [K('swUp', 'Vuốt từ dưới'), 'Độ phân giải, fps, tỉ lệ'],
-          [K('swRight', 'Vuốt từ trái'), 'Xem lại'],
-          [K('swLeft', 'Vuốt từ phải'), 'Làm đẹp, màu, mic'],
-          [K('track', 'Chạm đúp'), 'ActiveTrack (× để tắt)'],
-          [K('palm', 'Lòng bàn tay'), 'Bật / tắt bám theo'],
-          [K('vsign', 'Chữ V'), 'Quay / dừng (0,5–5 m)'],
-          [K('flip', 'Selfie Flip'), 'Vuốt ↓ › bật / tắt'],
+          ['swDown', 'g-sky', 'Vuốt từ trên', 'Gimbal, Wi-Fi, cài đặt'],
+          ['swUp', 'g-sky', 'Vuốt từ dưới', 'Độ phân giải, fps, tỉ lệ'],
+          ['swRight', 'g-sky', 'Vuốt từ trái', 'Xem lại'],
+          ['swLeft', 'g-sky', 'Vuốt từ phải', 'Làm đẹp, màu, mic'],
+          ['track', 'g-sage', 'Chạm đúp', 'ActiveTrack (× để tắt)'],
+          ['palm', 'g-peach', 'Lòng bàn tay', 'Bật / tắt bám theo'],
+          ['vsign', 'g-peach', 'Chữ V', 'Quay / dừng (0,5–5 m)'],
+          ['flip', 'g-lilac', 'Selfie Flip', 'Vuốt ↓ › bật / tắt'],
         ],
         micButtons: [
-          [K('box', 'Lấy khỏi hộp'), 'Tự bật, tự kết nối'],
-          [K('noise', 'Đúp nút nguồn'), 'Bật / tắt khử ồn'],
-          [K('power', 'Giữ nguồn 2s'), 'Bật / tắt'],
-          [K('link', 'Giữ Linking 2s'), 'Ghép máy mới'],
-          [K('phone', 'Với điện thoại'), 'Cắm bộ thu'],
+          ['box', 'g-gray', 'Lấy khỏi hộp', 'Tự bật, tự kết nối'],
+          ['noise', 'g-teal', 'Đúp nút nguồn', 'Bật / tắt khử ồn'],
+          ['power', 'g-red', 'Giữ nguồn 2s', 'Bật / tắt'],
+          ['link', 'g-sky', 'Giữ Linking 2s', 'Ghép máy mới'],
+          ['phone', 'g-sage', 'Với điện thoại', 'Cắm bộ thu'],
         ],
         leds: [
           ['background:#3B82F6', 'Xanh dương', 'Nối thẳng Pocket / điện thoại'],
@@ -670,12 +647,12 @@
           'Thẻ microSD <b>U3 / V30</b>',
         ],
         specs: [
-          ['~4 giờ', 'pin, quay 1080p'],
-          ['~2 giờ', 'pin, quay 4K60'],
-          ['~30 phút', 'sạc đầy (sạc PD)'],
-          ['~11 / 48 giờ', 'pin mic / kèm hộp sạc'],
-          ['400 m', 'tầm xa mic tối đa'],
-          ['Không', 'chống nước'],
+          ['battery', 'g-sage', 'Pin, quay 1080p', '~4 giờ'],
+          ['battery', 'g-sage', 'Pin, quay 4K60', '~2 giờ'],
+          ['bolt', 'g-yellow', 'Sạc đầy (sạc PD)', '~30 phút'],
+          ['mic', 'g-sky', 'Pin mic / kèm hộp sạc', '~11 / 48 giờ'],
+          ['link', 'g-teal', 'Tầm xa mic', '400 m'],
+          ['drop', 'g-sky', 'Chống nước', 'Không'],
         ],
 
         /* ---------- Công thức ---------- */
@@ -947,7 +924,7 @@
             ['Sột soạt', 'Kẹp chặt, tránh tóc, dây chuyền. Thử gắn nam châm trong áo.'],
             ['Mic với iPhone cổng Lightning', 'Bộ thu cần đầu chuyển Lightning.'],
           ]},
-          { name: 'Hình ảnh', grad: 'g-rose', icon: 'image', items: [
+          { name: 'Hình ảnh', grad: 'g-rose', icon: 'camera', items: [
             ['Cam lệch, nghiêng', 'Joystick ×2. Vẫn lệch: chạy hiệu chỉnh gimbal.'],
             ['Gimbal kêu, báo lỗi', 'Tháo vỏ bảo vệ, không chạm đầu cam, khởi động lại.'],
             ['Màu nhạt, xám', 'Đang ở D-Log. Vuốt ← đổi về màu Bình thường.'],
