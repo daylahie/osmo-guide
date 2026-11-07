@@ -769,23 +769,20 @@
 
             <!-- ---------- Công thức ---------- -->
             <div x-show="shootView === 'recipe'" x-cloak class="fade-in space-y-3">
-              <article class="glass card p-4">
-                <p class="section-label !px-0">💄 Beauty TikTok</p>
-                <div class="mt-2 flex flex-wrap gap-2">
-                  <template x-for="(r, i) in recipes" :key="'b' + i">
-                    <button x-show="r.group === 'beauty'" class="press rounded-full px-3 py-1.5 text-[13.5px] font-semibold border transition"
-                            :class="recipe === i ? 'bg-rose text-white border-rose' : 'bg-white/75 border-white text-ink'"
-                            @click="recipe = i"><span x-text="r.emoji + ' ' + r.name"></span></button>
-                  </template>
-                </div>
-                <p class="section-label !px-0 mt-4">Tình huống khác</p>
-                <div class="mt-2 flex flex-wrap gap-2">
-                  <template x-for="(r, i) in recipes" :key="'g' + i">
-                    <button x-show="r.group !== 'beauty'" class="press rounded-full px-3 py-1.5 text-[13.5px] font-semibold border transition"
-                            :class="recipe === i ? 'bg-rose text-white border-rose' : 'bg-white/75 border-white text-ink'"
-                            @click="recipe = i"><span x-text="r.emoji + ' ' + r.name"></span></button>
-                  </template>
-                </div>
+              <article class="glass card p-4 space-y-4">
+                <template x-for="g in recipeGroups" :key="g.id">
+                  <div>
+                    <p class="section-label !px-0" x-text="g.label"></p>
+                    <p x-show="g.note" class="text-[13px] text-soft mt-0.5" x-text="g.note"></p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <template x-for="(r, i) in recipes" :key="g.id + i">
+                        <button x-show="(r.group || 'general') === g.id" class="press rounded-full px-3 py-1.5 text-[13.5px] font-semibold border transition"
+                                :class="recipe === i ? 'bg-rose text-white border-rose' : 'bg-white/75 border-white text-ink'"
+                                @click="recipe = i"><span x-text="r.emoji + ' ' + r.name"></span></button>
+                      </template>
+                    </div>
+                  </div>
+                </template>
               </article>
 
               <article class="glass card p-4">
@@ -805,16 +802,16 @@
                 </template>
               </article>
 
-              <article x-show="recipes[recipe].group === 'beauty'" class="glass card overflow-hidden" x-data="{ open: true }">
+              <article x-show="curGroup.tips" class="glass card overflow-hidden" x-data="{ open: true }">
                 <button class="sec-head press" @click="open = !open" :aria-expanded="open">
                   <span class="tile sm g-rose"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.4z"/><path d="M18.5 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg></span>
-                  <span class="flex-1 h3">Mẹo chung cho video beauty</span>
+                  <span class="flex-1 h3" x-text="curGroup.tipsTitle"></span>
                   <svg class="shrink-0 text-soft transition-transform duration-300" :class="open && 'rotate-180'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                 </button>
                 <div x-show="open" x-collapse.duration.250ms>
                   <div class="sec-body">
                     <ul class="space-y-2.5 text-[15px] leading-relaxed">
-                      <template x-for="t in beautyTips" :key="t">
+                      <template x-for="t in (curGroup.tips || [])" :key="t">
                         <li class="flex gap-2.5"><span class="mt-[9px] h-1.5 w-1.5 rounded-full bg-rose/60 shrink-0"></span><span x-html="t"></span></li>
                       </template>
                     </ul>
@@ -1183,6 +1180,28 @@
         ],
 
         recipe: 0,
+        recipeGroups: [
+          { id: 'beauty', label: '💄 Beauty TikTok', tipsTitle: 'Mẹo chung cho video beauty', tips: [
+            'Video <b>15–45 giây</b> hợp TikTok. 3 giây đầu quyết định người xem có ở lại không.',
+            'Chừa trống <b>phía dưới và bên phải</b> khung hình: chữ mô tả và các nút của TikTok che ở đó. Giữ mặt và sản phẩm ở giữa.',
+            'Dùng <b>ánh sáng trắng</b>, tắt đèn vàng để màu da và màu sản phẩm đúng.',
+            'Làm đẹp: <b>bật nhẹ khi nói, tắt khi demo</b> hiệu quả sản phẩm để trung thực với người xem.',
+            'Quay nhiều cảnh ngắn: nói review, cận cảnh, dùng thử, kết quả. Khi dựng ghép xen kẽ cho video sinh động.',
+            'Ghi rõ sản phẩm được tặng hay tự mua để người xem tin tưởng.',
+          ]},
+          { id: 'cinema', label: '🎞️ Phong cảnh điện ảnh', note: 'Chọn điểm đến để xem cách quay cho ra chất phim của nơi đó.', tipsTitle: 'Mẹo chung để video ra chất phim', tips: [
+            'Quay <b>4K 24fps</b>: đây là tốc độ khung hình của phim điện ảnh, chuyển động trông “phim” hơn hẳn.',
+            'Mỗi cảnh giữ <b>5–8 giây</b>, máy đứng yên hoặc di chuyển thật chậm. Bật <b>Tilt Locked</b> khi đi bộ.',
+            'Canh <b>giờ vàng</b> (khoảng 1 giờ sau bình minh và trước hoàng hôn) và <b>giờ xanh</b> (ngay sau hoàng hôn).',
+            'Tạo chiều sâu bằng <b>tiền cảnh</b>: cành lá, khung cửa, lan can ở gần ống kính.',
+            'Đứng xa và bấm <b>Zoom 2x</b>: núi, tòa nhà phía sau trông to và gần hơn.',
+            'Quay đủ 3 cỡ cảnh: <b>toàn cảnh</b> rộng, <b>cảnh trung</b> có người, <b>cận chi tiết</b> (biển hiệu, đồ ăn, bàn tay) để dựng có nhịp.',
+            'Khi dựng: thêm <b>viền đen trên dưới</b> (khung 2.35:1) cho cảm giác màn ảnh rộng, chỉnh màu theo gợi ý từng nơi, cắt cảnh theo nhịp nhạc.',
+            'Người mới cứ để màu <b>Bình thường</b> rồi chỉnh màu bằng bộ lọc khi dựng. D-Log chỉ dành cho người đã quen chỉnh màu.',
+          ]},
+          { id: 'general', label: 'Tình huống khác' },
+        ],
+        get curGroup() { const id = this.recipes[this.recipe].group || 'general'; return this.recipeGroups.find(g => g.id === id) || {}; },
         recipes: [
           { group: 'beauty', emoji: '🗣️', name: 'Nói review', lead: 'Cảnh bạn nhìn vào ống kính nói cảm nhận về sản phẩm.', rows: [
             ['Khung hình', '<b>Dọc 9:16</b>. Đặt máy cố định ngang tầm mắt, cách khoảng một cánh tay. Cam đang quay ra ngoài thì bấm <b class="whitespace-nowrap">Joystick × 3</b>.'],
@@ -1219,6 +1238,70 @@
             ['Âm thanh', 'Đặt <b>mic trên bàn</b> gần sản phẩm thay vì kẹp áo để tiếng bóc hộp rõ. <b>Tắt khử ồn</b> để giữ tiếng ASMR.'],
             ['Mẹo', 'Làm chậm rãi, móng tay gọn gàng, nền bàn trơn màu sáng.'],
           ]},
+          { group: 'cinema', emoji: '🗻', name: 'Núi Phú Sĩ · Nhật Bản', lead: 'Thanh bình, tinh tế như phim Nhật: nhiều khoảng trống, nhịp chậm.', rows: [
+            ['Giờ đẹp', '<b>Sáng sớm</b> trời quang, vì núi hay bị mây che từ trưa. Mùa đông, đầu xuân thấy tuyết trên đỉnh rõ nhất.'],
+            ['Cài đặt', 'Khung <b>ngang</b>, <b>4K 24fps</b>, gimbal <b>Tilt Locked</b>.'],
+            ['Cảnh nên quay', 'Núi phía sau mái nhà, cổng chùa, con phố nhỏ, hàng anh đào hoặc mặt hồ phản chiếu. Đứng xa bấm <b>Zoom 2x</b> để núi trông to, gần.'],
+            ['Chuyển động', 'Đặt máy yên 6–8 giây mỗi cảnh, lia cực chậm. <b>Timelapse</b> mây trôi qua đỉnh núi.'],
+            ['Màu khi dựng', 'Sáng, hơi nhạt, tông xanh lơ – trắng sữa, giảm tương phản.'],
+            ['Nhạc', 'Piano nhẹ, lo-fi.'],
+          ]},
+          { group: 'cinema', emoji: '🌃', name: 'Thượng Hải · Trung Quốc', lead: 'Đô thị lấp lánh, hoài niệm như phim Hồng Kông thập niên 90.', rows: [
+            ['Giờ đẹp', '<b>Giờ xanh</b> (20–30 phút sau hoàng hôn) khi đèn bờ Bến Thượng Hải và các tòa tháp Lục Gia Chủy vừa bật, và ban đêm.'],
+            ['Cài đặt', 'Khung <b>ngang</b>, <b>4K 24fps</b>. Trời tối chuyển chế độ <b>Thiếu sáng</b>.'],
+            ['Cảnh nên quay', 'Đường chân trời Lục Gia Chủy nhìn từ bờ sông, biển hiệu neon, phố đi bộ Nam Kinh, dòng xe, người qua đường.'],
+            ['Chuyển động', '<b>Hyperlapse</b> đi dọc bờ sông, <b>Timelapse</b> dòng xe, <b>Quay chậm</b> người đi dưới ánh neon. Cầm máy thấp khi đi.'],
+            ['Màu khi dựng', 'Tông xanh ngọc – đỏ neon, hơi tối, tăng tương phản nhẹ, thêm hạt nhiễu (grain).'],
+            ['Nhạc', 'City pop, synth, saxophone.'],
+          ]},
+          { group: 'cinema', emoji: '🍂', name: 'Seoul · Hàn Quốc', lead: 'Trong trẻo, ấm áp như phim truyền hình Hàn.', rows: [
+            ['Giờ đẹp', '<b>Chiều muộn</b> nắng vàng. Mùa thu lá ngân hạnh vàng, mùa xuân hoa anh đào.'],
+            ['Cài đặt', '<b>4K 24fps</b>, ngang cho YouTube hoặc dọc cho Reels. Gimbal <b>Follow</b>.'],
+            ['Cảnh nên quay', 'Con hẻm dốc, quán cà phê, cung điện cổ, hàng cây; nhân vật đi bộ quay lưng về phía máy.'],
+            ['Chuyển động', 'Đi theo sau nhân vật, <b>Quay chậm</b> tóc, váy bay trong gió, cận bàn tay cầm ly cà phê.'],
+            ['Màu khi dựng', 'Sáng, da hồng hào, tông kem – pastel, tương phản thấp.'],
+            ['Nhạc', 'Acoustic, ballad nhẹ.'],
+          ]},
+          { group: 'cinema', emoji: '🏮', name: 'Hội An · Việt Nam', lead: 'Hoài cổ, ấm áp, đèn lồng lung linh.', rows: [
+            ['Giờ đẹp', '<b>Sáng sớm</b> phố còn vắng, và <b>chiều tối</b> khi đèn lồng bật.'],
+            ['Cài đặt', 'Khung <b>ngang</b>, <b>4K 24fps</b>. Buổi tối dùng <b>Thiếu sáng</b>.'],
+            ['Cảnh nên quay', 'Tường vàng, giàn hoa giấy, dãy đèn lồng, thuyền trên sông Hoài. Cận đèn lồng bằng <b>Zoom 2x</b>.'],
+            ['Chuyển động', 'Ngẩng chậm từ mặt nước lên dãy đèn lồng, lia theo thuyền trôi, <b>Timelapse</b> phố đông về đêm.'],
+            ['Màu khi dựng', 'Vàng – cam ấm, xanh rêu ở vùng tối, hơi ngả vàng hoài cổ, thêm grain.'],
+            ['Nhạc', 'Sáo trúc, đàn tranh, nhạc không lời.'],
+          ]},
+          { group: 'cinema', emoji: '🗼', name: 'Paris · Pháp', lead: 'Lãng mạn, cổ điển như phim Pháp.', rows: [
+            ['Giờ đẹp', '<b>Giờ vàng</b>. Ban đêm tháp Eiffel nhấp nháy đèn vài phút vào đầu mỗi giờ.'],
+            ['Cài đặt', 'Khung <b>ngang</b>, <b>4K 24fps</b>, <b>Tilt Locked</b>.'],
+            ['Cảnh nên quay', 'Quán cà phê vỉa hè, ban công hoa, cầu bắc qua sông Seine, tháp Eiffel lấp ló giữa hai dãy nhà.'],
+            ['Chuyển động', 'Nhiều cảnh tĩnh như tranh. Quay qua cửa kính quán cà phê để có tiền cảnh. Lia chậm dọc bờ sông.'],
+            ['Màu khi dựng', 'Ấm, tông kem, độ bão hòa vừa phải, vùng tối hơi ngả xanh lá.'],
+            ['Nhạc', 'Accordion, jazz nhẹ.'],
+          ]},
+          { group: 'cinema', emoji: '🏔️', name: 'Iceland · Bắc Âu', lead: 'Hùng vĩ, lạnh, tối giản.', rows: [
+            ['Giờ đẹp', 'Bình minh và hoàng hôn. Mùa đông mặt trời thấp, ánh sáng dịu kéo dài.'],
+            ['Cài đặt', 'Khung <b>ngang</b>, <b>4K 24fps</b>. Thác nước dùng <b>Quay chậm</b>, cảnh rộng dùng <b>Panorama</b>.'],
+            ['Cảnh nên quay', 'Thác nước, bãi cát đen, con đường thẳng tắp, một người nhỏ bé giữa khung cảnh rộng lớn.'],
+            ['Chuyển động', 'Ngẩng thật chậm để “mở” cảnh, <b>Hyperlapse</b> đi trên con đường.'],
+            ['Màu khi dựng', 'Lạnh, xanh xám, giảm độ bão hòa, giữ màu tuyết trắng sạch.'],
+            ['Lưu ý', 'Trời lạnh làm pin <b>tụt nhanh</b>: giữ máy trong túi áo, mang sạc dự phòng. Tránh mưa và bụi nước gần thác.'],
+          ]},
+          { group: 'cinema', emoji: '🌴', name: 'Bali, Thái Lan · Nhiệt đới', lead: 'Rực rỡ, tươi mát, mùa hè.', rows: [
+            ['Giờ đẹp', 'Sáng sớm (tránh nắng gắt buổi trưa) và hoàng hôn trên biển.'],
+            ['Cài đặt', '<b>4K 60fps</b> cho cảnh nước, sóng; dọc nếu đăng Reels. <b>Quay chậm</b> sóng vỗ, tóc bay.'],
+            ['Cảnh nên quay', 'Bãi biển, ruộng bậc thang, hồ bơi vô cực, hàng dừa, đồ uống trái cây cận cảnh.'],
+            ['Chuyển động', 'Đi theo nhân vật trên bãi cát, lia chậm theo đường bờ biển.'],
+            ['Màu khi dựng', 'Tăng nhẹ độ bão hòa xanh ngọc của nước biển, da nâu ấm, sáng và trong.'],
+            ['Lưu ý', 'Máy <b>không chống nước</b>: giữ khoảng cách với sóng và hồ bơi, lau sạch cát.'],
+          ]},
+          { group: 'cinema', emoji: '🗽', name: 'New York · Mỹ', lead: 'Nhịp sống nhanh, phố thị năng động.', rows: [
+            ['Giờ đẹp', 'Hoàng hôn giữa các tòa nhà cao tầng, và ban đêm đèn phố.'],
+            ['Cài đặt', 'Khung <b>ngang</b>, <b>4K 24fps</b>. Cảnh đêm dùng <b>Thiếu sáng</b>.'],
+            ['Cảnh nên quay', 'Taxi vàng, ngã tư đông người, cầu Brooklyn, hơi nước bốc lên từ nắp cống, biển hiệu Times Square.'],
+            ['Chuyển động', '<b>Hyperlapse</b> băng qua phố, cầm máy thấp ngang hông, <b>Timelapse</b> dòng người ở ngã tư.'],
+            ['Màu khi dựng', 'Tông xanh ngọc – cam (teal & orange), tương phản cao.'],
+            ['Nhạc', 'Jazz, hip-hop không lời.'],
+          ]},
           { emoji: '🚶‍♀️', name: 'Vlog đi dạo', rows: [
             ['Khung hình', 'Dọc cho TikTok/Reels, ngang cho YouTube.'],
             ['Chất lượng', '<b>4K 60fps</b> cho chuyển động mượt.'],
@@ -1244,26 +1327,12 @@
             ['Chuyển động', 'Lia máy thật chậm từ trái sang phải, hoặc từ dưới ngẩng lên.'],
             ['Mẹo', 'Quay buổi sáng sớm hoặc chiều muộn cho ánh sáng đẹp, dịu.'],
           ]},
-          { emoji: '💃', name: 'Outfit, nhảy TikTok', rows: [
-            ['Khung hình', '<b>Dọc</b>, đặt máy cố định ngang hông hoặc ngực.'],
-            ['Chất lượng', '<b>4K 60fps</b> cho động tác mượt.'],
-            ['Bám theo', '<b>Chạm đúp</b> vào người hoặc giơ <b>lòng bàn tay</b> để cam xoay theo.'],
-            ['Mẹo', 'Giơ <b>chữ V</b> để bắt đầu quay khi đứng xa máy.'],
-          ]},
           { emoji: '🎤', name: 'Phỏng vấn 2 người', rows: [
             ['Khung hình', '<b>Ngang</b>, cả hai người trong khung, đặt máy cố định.'],
             ['Chất lượng', '<b>4K 30fps</b>.'],
             ['Âm thanh', 'Mỗi người kẹp <b>một mic</b>. Kiểm tra cả hai đèn đứng yên.'],
             ['Mẹo', 'Quay thử 10 giây, nghe lại xem tiếng hai người có đều không.'],
           ]},
-        ],
-        beautyTips: [
-          'Video <b>15–45 giây</b> hợp TikTok. 3 giây đầu quyết định người xem có ở lại không.',
-          'Chừa trống <b>phía dưới và bên phải</b> khung hình: chữ mô tả và các nút của TikTok che ở đó. Giữ mặt và sản phẩm ở giữa.',
-          'Dùng <b>ánh sáng trắng</b>, tắt đèn vàng để màu da và màu sản phẩm đúng.',
-          'Làm đẹp: <b>bật nhẹ khi nói, tắt khi demo</b> hiệu quả sản phẩm để trung thực với người xem.',
-          'Quay nhiều cảnh ngắn: nói review, cận cảnh, dùng thử, kết quả. Khi dựng ghép xen kẽ cho video sinh động.',
-          'Ghi rõ sản phẩm được tặng hay tự mua để người xem tin tưởng.',
         ],
         framingTips: [
           'Đặt <b>mắt</b> ở khoảng đường kẻ ngang phía trên (quy tắc 1/3).',
