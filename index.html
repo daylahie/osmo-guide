@@ -326,12 +326,7 @@
           <div class="flex items-center gap-2">
             <select class="field !py-2 flex-1 min-w-0" x-model="cityKey" @change="store('osmo-guide:city', cityKey)">
               <template x-if="here"><option value="here">📍 Vị trí của tôi</option></template>
-              <optgroup label="Việt Nam">
-                <template x-for="c in cities.filter(c => c.vn)" :key="c.key"><option :value="c.key" x-text="c.name" :selected="c.key === cityKey"></option></template>
-              </optgroup>
-              <optgroup label="Nước ngoài">
-                <template x-for="c in cities.filter(c => !c.vn)" :key="c.key"><option :value="c.key" x-text="c.name" :selected="c.key === cityKey"></option></template>
-              </optgroup>
+              <template x-for="c in cities" :key="c.key"><option :value="c.key" x-text="c.name" :selected="c.key === cityKey"></option></template>
             </select>
             <button class="btn press bg-white/80 shrink-0 !px-3" @click="locate()" :disabled="locating" x-text="locating ? '…' : '📍'" title="Dùng vị trí của tôi"></button>
           </div>
@@ -486,12 +481,7 @@
         '<path d="M24 62 Q45 52 66 62 L66 72 L24 72Z" fill="#FAD4E0"/><rect x="38" y="64" width="14" height="22" rx="3" fill="#fff" stroke="#E58AA6"/>' +
         '<ellipse cx="12" cy="98" rx="9" ry="12" fill="#F2C9B0"/><ellipse cx="78" cy="98" rx="9" ry="12" fill="#F2C9B0"/>' +
         '<circle cx="74" cy="132" r="5" fill="#2E2430"/><text x="45" y="150" text-anchor="middle" font-size="7" fill="#7C6F80">mic trên bàn</text>' },
-      /* ---- Điện ảnh ---- */
-      fuji: { o: 'h', body: H('fuji', '#BFD9EE', '#F7E3DC') +
-        '<circle cx="128" cy="22" r="7" fill="#FFF3D6"/>' +
-        '<path d="M18 74 L80 20 L142 74Z" fill="#6F86A8"/><path d="M80 20 L68 31 L74 30 L78 34 L82 30 L87 33 L92 31Z" fill="#fff"/>' +
-        '<rect y="72" width="160" height="18" fill="#9DB9D3"/><path d="M34 72 L80 88 L126 72Z" fill="#6F86A8" opacity=".3"/>' +
-        '<g fill="#4A3340"><path d="M5 46h24l-5-5H10z M7 55h20l-4-4H11z M9 64h16l-3-4H12z"/><rect x="13" y="46" width="8" height="5"/><rect x="14" y="55" width="6" height="5"/><rect x="14" y="64" width="6" height="9"/><rect x="16.5" y="34" width="1" height="7"/></g>' },
+      /* ---- Chuyến đi ---- */
       shanghai: { o: 'h', body: H('shanghai', '#1E2547', '#4A3566') +
         '<g fill="#10162B"><rect x="4" y="42" width="14" height="32"/><rect x="20" y="32" width="10" height="42"/><rect x="32" y="50" width="12" height="24"/>' +
         '<rect x="94" y="28" width="12" height="46"/><rect x="108" y="40" width="14" height="34"/><path d="M126 74 L128 18 L134 14 L136 74Z"/><rect x="138" y="46" width="18" height="28"/></g>' +
@@ -499,60 +489,20 @@
         '<circle cx="66" cy="58" r="8" fill="#E8679B"/><circle cx="66" cy="34" r="6" fill="#E8679B"/><circle cx="66" cy="22" r="2.6" fill="#E8679B"/>' +
         '<g fill="#F6D365" opacity=".85"><rect x="7" y="48" width="2" height="2"/><rect x="12" y="56" width="2" height="2"/><rect x="23" y="40" width="2" height="2"/><rect x="97" y="36" width="2" height="2"/><rect x="101" y="50" width="2" height="2"/><rect x="112" y="48" width="2" height="2"/><rect x="142" y="54" width="2" height="2"/></g>' +
         '<rect y="74" width="160" height="16" fill="#1A2444"/><path d="M60 78h12M58 83h16M126 79h10M98 81h10" stroke="#E8679B" stroke-width="1.2" opacity=".6"/><path d="M20 80h10M140 84h10" stroke="#5FD3C9" stroke-width="1.2" opacity=".6"/>' },
-      seoul: { o: 'v', body: V('seoul', '#FCE5C8', '#F6D2C2') +
-        '<path d="M0 30 L32 70 L32 160 L0 160Z" fill="#D9B8A4"/><path d="M90 26 L58 70 L58 160 L90 160Z" fill="#E7C7B0"/>' +
-        '<path d="M32 160 L38 70 L52 70 L58 160Z" fill="#CFB7A8"/><path d="M33 140h24M34 124h22M35 110h20M36 98h18M37 88h16M37 80h16" stroke="#B9A090" stroke-width="1"/>' +
-        '<circle cx="70" cy="34" r="16" fill="#F2B632"/><circle cx="82" cy="46" r="12" fill="#E9A21F"/><circle cx="60" cy="48" r="10" fill="#F5C451"/><rect x="73" y="54" width="3" height="20" fill="#7A5A44"/>' +
-        '<circle cx="45" cy="98" r="3" fill="#4A3340"/><path d="M42 101 h6 l1 12 h-8z" fill="#C2577A"/>' },
-      hoian: { o: 'h', body: H('hoian', '#F5B98B', '#8E6A9A') +
-        '<rect y="38" width="160" height="34" fill="#E8B84A"/><rect y="34" width="160" height="5" fill="#8A4B3A"/>' +
-        '<g fill="#7A4B2E"><rect x="12" y="48" width="10" height="16"/><rect x="40" y="46" width="8" height="10"/><rect x="66" y="48" width="12" height="18"/><rect x="100" y="46" width="8" height="10"/><rect x="128" y="48" width="12" height="18"/></g>' +
-        '<path d="M0 18 Q80 34 160 18" stroke="#4A3340" stroke-width=".8" fill="none"/>' +
-        '<g><circle cx="20" cy="24" r="5" fill="#E2483D"/><circle cx="46" cy="28" r="5" fill="#F29E38"/><circle cx="72" cy="30" r="5" fill="#E2483D"/><circle cx="98" cy="30" r="5" fill="#F2C14E"/><circle cx="124" cy="27" r="5" fill="#E2483D"/><circle cx="148" cy="22" r="5" fill="#F29E38"/></g>' +
-        '<rect y="72" width="160" height="18" fill="#3D5A6C"/><g fill="#F29E38" opacity=".55"><ellipse cx="46" cy="80" rx="3" ry="1.2"/><ellipse cx="98" cy="82" rx="3" ry="1.2"/><ellipse cx="20" cy="84" rx="3" ry="1.2"/></g>' +
-        '<path d="M62 80 h26 l-4 5 h-18z" fill="#2E2430"/>' },
-      paris: { o: 'h', body: H('paris', '#F8D7B0', '#F4EBDD') +
-        '<circle cx="124" cy="28" r="9" fill="#FBE7C6"/>' +
-        '<path d="M79 10 h2 l8 62 h-5 l-4-20 l-4 20 h-5z" fill="#5C4A3F"/><rect x="73" y="38" width="14" height="2.5" fill="#5C4A3F"/><rect x="75" y="24" width="10" height="2" fill="#5C4A3F"/>' +
-        '<rect x="0" y="40" width="46" height="50" fill="#EADBC8"/><rect y="36" width="46" height="5" fill="#8C8C9A"/><rect x="114" y="44" width="46" height="46" fill="#EADBC8"/><rect x="114" y="40" width="46" height="5" fill="#8C8C9A"/>' +
-        '<g fill="#B9A48D"><rect x="6" y="48" width="6" height="9"/><rect x="20" y="48" width="6" height="9"/><rect x="34" y="48" width="6" height="9"/><rect x="6" y="64" width="6" height="9"/><rect x="20" y="64" width="6" height="9"/><rect x="34" y="64" width="6" height="9"/><rect x="120" y="52" width="6" height="9"/><rect x="134" y="52" width="6" height="9"/><rect x="148" y="52" width="6" height="9"/></g>' +
-        '<g fill="#D46A8C"><circle cx="9" cy="58" r="1.6"/><circle cx="23" cy="58" r="1.6"/><circle cx="137" cy="62" r="1.6"/></g>' +
-        '<rect y="80" width="160" height="10" fill="#CDBBA4"/>' },
-      iceland: { o: 'h', body: H('iceland', '#C7D2DC', '#EEF1F3') +
-        '<path d="M0 30 L40 22 L120 22 L160 32 L160 72 L0 72Z" fill="#3D4247"/><rect x="72" y="22" width="16" height="50" fill="#E9F2F6"/>' +
-        '<path d="M76 24v46M81 24v46M85 24v46" stroke="#C9D8E0" stroke-width="1"/><ellipse cx="80" cy="72" rx="34" ry="6" fill="#fff" opacity=".75"/>' +
-        '<rect y="72" width="160" height="18" fill="#26292D"/><circle cx="122" cy="76" r="1.6" fill="#2E2430"/><rect x="121" y="77.5" width="2.2" height="5" fill="#C2577A"/>' },
-      tropical: { o: 'h', body: H('tropical', '#8FD3E8', '#FFD9A8') +
-        '<circle cx="112" cy="54" r="11" fill="#FFE7A8"/><rect y="56" width="160" height="18" fill="#2BB0BE"/><path d="M90 60h40M98 66h26" stroke="#BDF1F4" stroke-width="1.2"/>' +
-        '<path d="M0 74 Q80 68 160 74 L160 90 L0 90Z" fill="#F2D7A0"/>' +
-        '<path d="M30 90 Q35 60 44 34" stroke="#6B4B2E" stroke-width="3.5" fill="none"/>' +
-        '<g fill="#2F8F5B"><path d="M44 34 Q24 26 12 36 Q28 30 44 36Z"/><path d="M44 34 Q60 22 74 30 Q58 28 44 36Z"/><path d="M44 34 Q34 16 22 14 Q36 22 43 36Z"/><path d="M44 34 Q56 44 60 58 Q50 46 43 36Z"/></g>' },
-      newyork: { o: 'h', body: H('newyork', '#6B5B95', '#F6A77E') +
-        '<g fill="#2B2440"><rect x="4" y="30" width="16" height="48"/><rect x="22" y="44" width="14" height="34"/><rect x="38" y="20" width="12" height="58"/><rect x="60" y="24" width="14" height="54"/><rect x="65.5" y="12" width="3" height="12"/>' +
-        '<rect x="78" y="40" width="16" height="38"/><rect x="98" y="28" width="12" height="50"/><rect x="114" y="46" width="18" height="32"/><rect x="136" y="34" width="20" height="44"/></g>' +
-        '<g fill="#F6D365" opacity=".7"><rect x="8" y="38" width="2" height="2"/><rect x="42" y="30" width="2" height="2"/><rect x="64" y="34" width="2" height="2"/><rect x="102" y="40" width="2" height="2"/><rect x="140" y="44" width="2" height="2"/></g>' +
-        '<rect y="78" width="160" height="12" fill="#3A3348"/><rect x="96" y="70" width="28" height="8" rx="2" fill="#F7C548"/><rect x="102" y="65.5" width="15" height="5" rx="1.5" fill="#F7C548"/>' +
-        '<circle cx="102" cy="78.5" r="2.6" fill="#1F1A2C"/><circle cx="118" cy="78.5" r="2.6" fill="#1F1A2C"/>' },
-      dalat: { o: 'h', body: H('dalat', '#DCE6E0', '#F4F1EA') +
-        '<path d="M0 54 Q40 30 80 46 Q120 30 160 50 L160 90 L0 90Z" fill="#A9BFAF"/>' +
-        '<g fill="#2F5D4A"><path d="M14 74 L22 40 L30 74Z"/><path d="M28 76 L34 50 L40 76Z"/><path d="M118 74 L127 36 L136 74Z"/><path d="M136 76 L143 48 L150 76Z"/><path d="M60 72 L65 54 L70 72Z"/></g>' +
-        '<rect y="46" width="160" height="8" fill="#fff" opacity=".55"/><rect y="62" width="160" height="6" fill="#fff" opacity=".45"/>' +
-        '<rect y="76" width="160" height="14" fill="#B7CBC9"/><g fill="#F2C230"><circle cx="50" cy="78" r="1.6"/><circle cx="56" cy="80" r="1.6"/><circle cx="90" cy="79" r="1.6"/><circle cx="96" cy="77" r="1.6"/></g>' },
-      sapa: { o: 'h', body: H('sapa', '#E4ECF2', '#F7F2E6') +
-        '<path d="M0 46 L36 18 L70 40 L104 14 L160 44 L160 90 L0 90Z" fill="#9DB3C0"/>' +
-        '<ellipse cx="50" cy="40" rx="28" ry="5" fill="#fff" opacity=".85"/><ellipse cx="120" cy="34" rx="24" ry="4" fill="#fff" opacity=".85"/>' +
-        '<path d="M0 56 Q80 44 160 58 L160 90 L0 90Z" fill="#8DBF5A"/>' +
-        '<path d="M0 64 Q80 52 160 66M0 72 Q80 60 160 74M0 80 Q80 68 160 82" stroke="#D9C25A" stroke-width="2.5" fill="none"/><path d="M0 68 Q80 56 160 70M0 76 Q80 64 160 78M0 86 Q80 74 160 88" stroke="#6FA64A" stroke-width="1.5" fill="none"/>' },
       hanoi: { o: 'h', body: H('hanoi', '#F4DFC0', '#F9EEDC') +
         '<g><rect x="40" y="26" width="18" height="54" fill="#E9C46A"/><rect x="60" y="34" width="16" height="46" fill="#E07A5F"/><rect x="78" y="22" width="18" height="58" fill="#81B29A"/><rect x="98" y="30" width="16" height="50" fill="#F2CC8F"/><rect x="116" y="38" width="20" height="42" fill="#E9C46A"/></g>' +
         '<g fill="#5C4A3F" opacity=".6"><rect x="44" y="34" width="10" height="7"/><rect x="63" y="42" width="10" height="7"/><rect x="82" y="30" width="10" height="7"/><rect x="101" y="38" width="10" height="7"/><rect x="120" y="46" width="12" height="7"/></g>' +
         '<path d="M40 50h96" stroke="#5C4A3F" stroke-width="1"/>' +
         '<rect x="18" y="40" width="3" height="40" fill="#7A5A44"/><circle cx="20" cy="34" r="16" fill="#E9B949"/><circle cx="8" cy="42" r="9" fill="#F2C94C"/>' +
         '<rect y="80" width="160" height="10" fill="#B8A48A"/><circle cx="62" cy="82" r="3" fill="#2E2430"/><circle cx="76" cy="82" r="3" fill="#2E2430"/><path d="M62 82 L66 76 H74 L76 82" stroke="#C2577A" stroke-width="2.5" fill="none"/><circle cx="70" cy="70" r="2.5" fill="#2E2430"/>' },
-      saigon: { o: 'h', body: H('saigon', '#14213D', '#3D3B6E') +
-        '<g fill="#0E1730"><rect x="6" y="46" width="16" height="30"/><rect x="24" y="36" width="12" height="40"/><rect x="40" y="52" width="16" height="24"/><rect x="120" y="44" width="14" height="32"/><rect x="138" y="54" width="18" height="22"/></g>' +
-        '<path d="M96 76 L100 14 L104 10 L108 14 L112 76Z" fill="#2A4E6E"/><path d="M100 18 L104 12 L108 18" stroke="#5FD3C9" stroke-width="1" fill="none"/><path d="M101 30v40M107 30v40" stroke="#5FD3C9" stroke-width=".8" opacity=".7"/>' +
-        '<rect y="76" width="160" height="14" fill="#1D2C4D"/><path d="M0 82 Q80 78 160 84" stroke="#F4A261" stroke-width="1.6" fill="none"/><path d="M0 86 Q80 82 160 88" stroke="#fff" stroke-width="1" fill="none" opacity=".7"/>' },
+      ninhbinh: { o: 'h', body: H('ninhbinh', '#DCE8E6', '#F4EFE2') +
+        '<path d="M0 62 Q8 24 20 30 Q26 14 36 28 Q44 50 52 62Z" fill="#9DBBAA"/><path d="M96 62 Q102 20 114 22 Q122 8 132 24 Q140 40 150 30 Q158 36 160 62Z" fill="#9DBBAA"/>' +
+        '<path d="M28 64 Q34 34 46 38 Q54 20 64 40 Q70 56 78 64Z" fill="#5E8C77"/><path d="M106 64 Q112 40 122 44 Q130 30 140 48 Q146 58 152 64Z" fill="#5E8C77"/>' +
+        '<ellipse cx="80" cy="56" rx="64" ry="4" fill="#fff" opacity=".6"/>' +
+        '<rect y="62" width="160" height="28" fill="#4E9A8E"/><path d="M28 63 Q53 76 78 63Z M106 63 Q129 74 152 63Z" fill="#3E7F73" opacity=".6"/>' +
+        '<path d="M0 82 Q40 76 72 84 L72 90 L0 90Z" fill="#C9D46A"/>' +
+        '<path d="M84 76 h30 l-4 4 h-22z" fill="#5C4A3F"/><rect x="98.5" y="70" width="3" height="6" fill="#C2577A"/><path d="M95.5 70.5 l4.5 -5 l4.5 5z" fill="#E9D8A6"/>' +
+        '<path d="M76 84 h44" stroke="#BDE3DA" stroke-width="1" opacity=".7"/>' },
       /* ---- Khác ---- */
       walk: { o: 'v', body: V('walk', '#CFE8F3', '#FDF0E3') +
         '<path d="M30 160 L42 80 L48 80 L60 160Z" fill="#E8DCCB"/><path d="M0 92 Q45 76 90 92 L90 160 L60 160 L48 80 L42 80 L30 160 L0 160Z" fill="#A9CFA0"/>' +
@@ -618,6 +568,7 @@
           ['Chạm đúp', 'ActiveTrack (× để tắt)'],
           ['✋ Lòng bàn tay', 'Bật / tắt bám theo'],
           ['✌️ Chữ V', 'Quay / dừng (0,5–5 m)'],
+          ['↓ › Selfie Flip', 'Lật hình khi quay cam trước'],
         ],
         micButtons: [
           ['Lấy khỏi hộp', 'Tự bật, tự kết nối'],
@@ -664,13 +615,12 @@
             'Chừa trống phía dưới và bên phải cho chữ, nút của TikTok (vùng tối trong hình minh họa)',
             'Ghi rõ sản phẩm được tặng hay tự mua',
           ]},
-          { id: 'cinema', label: '🎞️ Phong cảnh điện ảnh', tips: [
+          { id: 'trip', label: '✈️ Chuyến đi sắp tới', tips: [
             '4K24, mỗi cảnh giữ 5–8 giây, máy đứng yên hoặc lia thật chậm',
             'Giờ vàng, giờ xanh (xem tab Giờ đẹp). Có tiền cảnh để tạo chiều sâu',
             'Đủ 3 cỡ cảnh: toàn, trung, cận chi tiết',
             'Khi dựng: viền đen 2.35:1, chỉnh màu theo dải 🎨',
           ]},
-          { id: 'vn', label: '🇻🇳 Việt Nam điện ảnh' },
           { id: 'other', label: 'Khác' },
         ],
         recipes: [
@@ -679,6 +629,7 @@
             'Đèn trắng trước mặt, tắt đèn vàng',
             'Làm đẹp nhẹ khi nói, <b>tắt khi demo</b> trên da',
             'Phòng yên tĩnh: tắt khử ồn',
+            '<b>Selfie Flip tắt</b> để chữ trên sản phẩm không bị ngược',
           ]},
           { group: 'beauty', emoji: '🧴', name: 'Cận cảnh, kết cấu', scene: 'macro', tags: ['Dọc', '4K30', 'Zoom 2x', 'Tắt làm đẹp'], tips: [
             'Slow Motion cho bơm kem, giọt serum, dầu gội chảy',
@@ -697,79 +648,26 @@
             'Đặt mic trên bàn, <b>tắt khử ồn</b>',
             'Nền bàn trơn, sáng màu',
           ]},
-          /* Điện ảnh nước ngoài */
-          { group: 'cinema', emoji: '🗻', name: 'Phú Sĩ · Nhật', scene: 'fuji', city: 'fuji', palette: ['#DCE8F2', '#A9C3DA', '#F3E6E0', '#6F86A8'],
-            tags: ['Ngang', '4K24', 'Tilt Locked', 'Zoom 2x'], tips: [
-            '⏰ Sáng sớm (trưa hay có mây), mùa đông – xuân',
-            '🎬 Núi sau mái chùa, mặt hồ phản chiếu, Timelapse mây',
-            '🎨 Nhạt, xanh lơ, tương phản thấp · 🎵 Piano, lo-fi',
-          ]},
-          { group: 'cinema', emoji: '🌃', name: 'Thượng Hải · Trung', scene: 'shanghai', city: 'shanghai', palette: ['#1E2547', '#3FB8AF', '#E8679B', '#F6D365'],
-            tags: ['Ngang', '4K24', 'Low-Light'], tips: [
-            '⏰ Giờ xanh, ban đêm',
-            '🎬 Skyline Lục Gia Chủy từ bờ Bến Thượng Hải, neon, Hyperlapse dọc sông',
+          /* Chuyến đi sắp tới */
+          { group: 'trip', emoji: '🌃', name: 'Thượng Hải', scene: 'shanghai', city: 'shanghai', palette: ['#1E2547', '#3FB8AF', '#E8679B', '#F6D365'],
+            tags: ['Ngang', '4K24', 'Low-Light', 'Hyperlapse'], tips: [
+            '⏰ Giờ xanh và ban đêm. Ban ngày: chiều muộn',
+            '🎬 Đêm: skyline Lục Gia Chủy từ bờ Bến Thượng Hải, neon phố Nam Kinh, Hyperlapse dọc sông',
+            '🎬 Ngày: Dự Viên, phố Vũ Khang, ngõ Điền Tử Phường',
             '🎨 Xanh ngọc – đỏ neon, grain · 🎵 City pop, sax',
           ]},
-          { group: 'cinema', emoji: '🍂', name: 'Seoul · Hàn', scene: 'seoul', city: 'seoul', palette: ['#FCE5C8', '#F5C451', '#F2C9B0', '#E8D9F0'],
-            tags: ['4K24', 'Follow', 'Slow Motion'], tips: [
-            '⏰ Chiều nắng vàng, mùa thu, mùa anh đào',
-            '🎬 Hẻm dốc, quán cà phê, đi theo sau nhân vật',
-            '🎨 Kem pastel, da hồng · 🎵 Acoustic',
-          ]},
-          { group: 'cinema', emoji: '🗼', name: 'Paris · Pháp', scene: 'paris', city: 'paris', palette: ['#F8D7B0', '#EADBC8', '#B9A48D', '#6E7F5E'],
-            tags: ['Ngang', '4K24', 'Tilt Locked'], tips: [
-            '⏰ Giờ vàng; tối Eiffel nhấp nháy đầu mỗi giờ',
-            '🎬 Cà phê vỉa hè, ban công hoa, quay qua cửa kính',
-            '🎨 Ấm, tông kem · 🎵 Accordion, jazz',
-          ]},
-          { group: 'cinema', emoji: '🏔️', name: 'Iceland · Bắc Âu', scene: 'iceland', city: 'reykjavik', palette: ['#C7D2DC', '#8A99A6', '#3D4247', '#EEF1F3'],
-            tags: ['Ngang', '4K24', 'Slow Motion', 'Panorama'], tips: [
-            '⏰ Bình minh, hoàng hôn',
-            '🎬 Thác nước, cát đen, người nhỏ giữa cảnh rộng',
-            '🎨 Lạnh, xanh xám · ⚠️ Lạnh hao pin, tránh bụi nước',
-          ]},
-          { group: 'cinema', emoji: '🌴', name: 'Bali, Thái · Nhiệt đới', scene: 'tropical', city: 'bali', palette: ['#2BB0BE', '#8FD3E8', '#FFD9A8', '#B9774F'],
-            tags: ['4K60', 'Slow Motion'], tips: [
-            '⏰ Sáng sớm, hoàng hôn',
-            '🎬 Biển, ruộng bậc thang, hồ vô cực',
-            '🎨 Xanh ngọc, da nâu ấm · ⚠️ Giữ máy xa nước',
-          ]},
-          { group: 'cinema', emoji: '🗽', name: 'New York · Mỹ', scene: 'newyork', city: 'nyc', palette: ['#2B6F7A', '#F6A77E', '#F7C548', '#2B2440'],
-            tags: ['Ngang', '4K24', 'Hyperlapse'], tips: [
-            '⏰ Hoàng hôn, ban đêm',
-            '🎬 Taxi vàng, ngã tư, cầu Brooklyn, cầm máy thấp',
-            '🎨 Teal & orange, tương phản cao · 🎵 Jazz, hip-hop',
-          ]},
-          /* Việt Nam */
-          { group: 'vn', emoji: '🏮', name: 'Hội An', scene: 'hoian', city: 'hoian', palette: ['#E8B84A', '#E2483D', '#F29E38', '#3D5A6C'],
-            tags: ['Ngang', '4K24', 'Low-Light'], tips: [
-            '⏰ Sáng sớm vắng người, chiều tối lên đèn',
-            '🎬 Tường vàng, đèn lồng, ngẩng từ mặt sông lên',
-            '🎨 Vàng cam ấm, grain · 🎵 Sáo trúc, đàn tranh',
-          ]},
-          { group: 'vn', emoji: '🌲', name: 'Đà Lạt', scene: 'dalat', city: 'dalat', palette: ['#DCE6E0', '#7C9C88', '#2F5D4A', '#F2C230'],
-            tags: ['Ngang', '4K24', 'Follow'], tips: [
-            '⏰ Sáng sớm có sương, tháng 11 mùa dã quỳ',
-            '🎬 Rừng thông, mặt hồ, quán cà phê gỗ, Timelapse sương tan',
-            '🎨 Xanh rêu, mờ sương, hơi ấm · 🎵 Acoustic, indie',
-          ]},
-          { group: 'vn', emoji: '⛰️', name: 'Sa Pa', scene: 'sapa', city: 'sapa', palette: ['#E4ECF2', '#8DBF5A', '#D9C25A', '#9DB3C0'],
-            tags: ['Ngang', '4K24', 'Panorama', 'Timelapse'], tips: [
-            '⏰ Sáng sớm săn mây; tháng 9 lúa chín',
-            '🎬 Ruộng bậc thang, mây trôi qua núi, bản làng',
-            '🎨 Xanh lá – vàng lúa, trong · ⚠️ Lạnh, ẩm: giữ pin ấm',
-          ]},
-          { group: 'vn', emoji: '🛵', name: 'Phố cổ Hà Nội', scene: 'hanoi', city: 'hn', palette: ['#E9C46A', '#E07A5F', '#81B29A', '#F4DFC0'],
+          { group: 'trip', emoji: '🛵', name: 'Hà Nội', scene: 'hanoi', city: 'hn', palette: ['#E9C46A', '#E07A5F', '#81B29A', '#F4DFC0'],
             tags: ['4K24', 'Tilt Locked', 'Slow Motion'], tips: [
-            '⏰ Sáng sớm quanh Hồ Gươm, chiều thu nắng nhạt',
-            '🎬 Gánh hàng rong, dòng xe máy, nhìn xuống phố từ ban công quán cà phê',
+            '⏰ Sáng sớm Hồ Gươm, hoàng hôn Hồ Tây, chiều thu nắng nhạt',
+            '🎬 Gánh hàng rong, dòng xe máy (Slow Motion), nhìn xuống phố từ ban công quán cà phê, cầu Long Biên',
             '🎨 Vàng ấm hoài niệm, grain · 🎵 Nhạc xưa không lời',
           ]},
-          { group: 'vn', emoji: '🌆', name: 'Sài Gòn về đêm', scene: 'saigon', city: 'hcm', palette: ['#14213D', '#2A4E6E', '#5FD3C9', '#F4A261'],
-            tags: ['Ngang', '4K24', 'Low-Light', 'Hyperlapse'], tips: [
-            '⏰ Giờ xanh, ban đêm',
-            '🎬 Phố đi bộ Nguyễn Huệ, Landmark 81 từ bờ sông, Timelapse dòng xe',
-            '🎨 Xanh ngọc – cam, tương phản cao · 🎵 Lo-fi, R&B',
+          { group: 'trip', emoji: '🛶', name: 'Ninh Bình', scene: 'ninhbinh', city: 'ninhbinh', palette: ['#2E7D6B', '#8CC08A', '#E9D27A', '#DCE6DE'],
+            tags: ['Ngang', '4K24', 'Tilt Locked', 'Panorama'], tips: [
+            '⏰ Sáng sớm có sương. Cuối tháng 5 – đầu tháng 6 lúa chín ở Tam Cốc',
+            '🎬 Trên thuyền Tràng An, Tam Cốc: cầm máy thấp sát mặt nước, Hyperlapse khi thuyền đi qua núi đá',
+            '🎬 Đỉnh Hang Múa: Panorama, Zoom 2x lấy khúc sông uốn quanh cánh đồng',
+            '🎨 Xanh ngọc – xanh lá, sương nhẹ · ⚠️ Trên thuyền: đeo dây máy, máy không chống nước',
           ]},
           /* Khác */
           { group: 'other', emoji: '🚶‍♀️', name: 'Vlog đi dạo', scene: 'walk', tags: ['4K60', 'Tilt Locked', 'Joystick ×3'], tips: ['Mic cổ áo + bông lọc gió'] },
@@ -831,19 +729,9 @@
 
         /* ---------- Giờ đẹp ---------- */
         cities: [
-          { key: 'hn', name: 'Hà Nội', lat: 21.028, lng: 105.854, tz: 'Asia/Ho_Chi_Minh', vn: true },
-          { key: 'hcm', name: 'TP. Hồ Chí Minh', lat: 10.776, lng: 106.701, tz: 'Asia/Ho_Chi_Minh', vn: true },
-          { key: 'hoian', name: 'Hội An', lat: 15.880, lng: 108.335, tz: 'Asia/Ho_Chi_Minh', vn: true },
-          { key: 'dalat', name: 'Đà Lạt', lat: 11.940, lng: 108.458, tz: 'Asia/Ho_Chi_Minh', vn: true },
-          { key: 'sapa', name: 'Sa Pa', lat: 22.336, lng: 103.844, tz: 'Asia/Ho_Chi_Minh', vn: true },
-          { key: 'fuji', name: 'Núi Phú Sĩ (Kawaguchiko)', lat: 35.517, lng: 138.751, tz: 'Asia/Tokyo' },
+          { key: 'hn', name: 'Hà Nội', lat: 21.028, lng: 105.854, tz: 'Asia/Ho_Chi_Minh' },
+          { key: 'ninhbinh', name: 'Ninh Bình (Tam Cốc)', lat: 20.215, lng: 105.937, tz: 'Asia/Ho_Chi_Minh' },
           { key: 'shanghai', name: 'Thượng Hải', lat: 31.240, lng: 121.490, tz: 'Asia/Shanghai' },
-          { key: 'seoul', name: 'Seoul', lat: 37.566, lng: 126.978, tz: 'Asia/Seoul' },
-          { key: 'bangkok', name: 'Bangkok', lat: 13.756, lng: 100.502, tz: 'Asia/Bangkok' },
-          { key: 'bali', name: 'Bali (Ubud)', lat: -8.507, lng: 115.263, tz: 'Asia/Makassar' },
-          { key: 'paris', name: 'Paris', lat: 48.857, lng: 2.352, tz: 'Europe/Paris' },
-          { key: 'reykjavik', name: 'Reykjavík', lat: 64.147, lng: -21.943, tz: 'Atlantic/Reykjavik' },
-          { key: 'nyc', name: 'New York', lat: 40.713, lng: -74.006, tz: 'America/New_York' },
         ],
         get city() { return this.cityKey === 'here' && this.here ? this.here : (this.cities.find(c => c.key === this.cityKey) || this.cities[0]); },
         cityName(k) { const c = this.cities.find(c => c.key === k); return c ? c.name.replace(/ \(.*\)/, '') : ''; },
@@ -915,7 +803,7 @@
             ['Cam lệch, nghiêng', 'Joystick ×2. Vẫn lệch: chạy hiệu chỉnh gimbal.'],
             ['Gimbal kêu, báo lỗi', 'Tháo vỏ bảo vệ, không chạm đầu cam, khởi động lại.'],
             ['Màu nhạt, xám', 'Đang ở D-Log. Vuốt ← đổi về màu Bình thường.'],
-            ['Chữ selfie bị ngược', 'Tắt lật ảnh selfie trong cài đặt.'],
+            ['Chữ selfie bị ngược', 'Vuốt ↓ › tắt <b>Selfie Flip</b>. Màn hình luôn hiện như gương, file quay mới là chiều thật.'],
             ['Không bám mặt', 'Chạm đúp lại, đủ sáng, đứng gần hơn.'],
           ]},
           { name: 'Pin, thẻ, nhiệt', grad: 'g-peach', icon: 'battery', items: [
