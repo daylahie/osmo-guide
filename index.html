@@ -89,6 +89,7 @@
     .row .v { text-align: right; font-weight: 500; }
     .tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700;
       background: #FCF1F4; color: #B04A6C; white-space: nowrap; }
+    .tag.sm { padding: 2px 8px; font-size: 11.5px; }
     .dot { width: 10px; height: 10px; border-radius: 999px; flex-shrink: 0; display: inline-block; }
     .chip { border-radius: 999px; padding: 6px 12px; font-size: 13.5px; font-weight: 600; border: 1px solid #fff; background: rgba(255,255,255,.75); }
     .chip.on { background: #C2577A; color: #fff; border-color: #C2577A; }
@@ -260,6 +261,26 @@
                   <li class="flex gap-2"><span class="mt-[9px] h-1.5 w-1.5 rounded-full bg-rose/60 shrink-0"></span><span x-html="t"></span></li>
                 </template>
               </ul>
+              <div x-show="cur.plan" class="mt-4">
+                <p class="text-[12px] font-bold uppercase tracking-wider text-soft">Lịch quay</p>
+                <ol class="mt-2.5 ml-1.5 space-y-3.5 border-l-2" style="border-color: rgba(194,87,122,.22)">
+                  <template x-for="st in (cur.plan || [])" :key="st.place">
+                    <li class="relative pl-4">
+                      <span class="absolute -left-[8px] top-[3px] h-3.5 w-3.5 rounded-full border-2 border-white shadow-sm"
+                            :style="`background:${st.kind === 'gold' ? '#F4B860' : st.kind === 'blue' ? '#5B84C4' : '#E58AA6'}`"></span>
+                      <p class="text-[12.5px] font-bold tabular-nums" :class="st.kind === 'gold' ? 'text-[#C98A1F]' : st.kind === 'blue' ? 'text-[#4A6FB0]' : 'text-rose'"
+                         x-text="st.time + (st.kind === 'gold' ? ' · Giờ vàng' : st.kind === 'blue' ? ' · Giờ xanh' : '')"></p>
+                      <p class="text-[15.5px] font-semibold leading-snug mt-0.5" x-text="st.place"></p>
+                      <ul class="mt-1 space-y-0.5 text-[14px] text-ink/85">
+                        <template x-for="sh in st.shots" :key="sh"><li class="flex gap-1.5"><span class="text-soft">–</span><span x-text="sh"></span></li></template>
+                      </ul>
+                      <div class="mt-1.5 flex flex-wrap gap-1">
+                        <template x-for="t in st.set" :key="t"><span class="tag sm" x-text="t"></span></template>
+                      </div>
+                    </li>
+                  </template>
+                </ol>
+              </div>
               <button x-show="cur.city" class="mt-3 btn press bg-white/80 text-rose text-[13.5px] !py-2" @click="seeLight(cur.city)">
                 ☀️ Giờ vàng ở <span x-text="cityName(cur.city)"></span>
               </button>
@@ -643,19 +664,97 @@
             'Nền bàn trơn, sáng màu',
           ]},
           /* Chuyến đi sắp tới */
-          { group: 'trip', emoji: '🌃', name: 'Thượng Hải', scene: 'shanghai', city: 'shanghai', palette: ['#1E2547', '#3FB8AF', '#E8679B', '#F6D365'],
-            tags: ['Ngang', '4K24', 'Low-Light', 'Hyperlapse'], tips: [
-            '⏰ Giờ xanh và ban đêm. Ban ngày: chiều muộn',
-            '🎬 Đêm: skyline Lục Gia Chủy từ bờ Bến Thượng Hải, neon phố Nam Kinh, Hyperlapse dọc sông',
-            '🎬 Ngày: Dự Viên, phố Vũ Khang, ngõ Điền Tử Phường',
-            '🎨 Xanh ngọc – đỏ neon, grain · 🎵 City pop, sax',
+          { group: 'trip', emoji: '🌃', name: 'Thượng Hải', scene: 'shanghai', city: 'shanghai', palette: ['#E3A548', '#C9733A', '#1E2547', '#3FB8AF', '#E8679B'],
+            tags: ['Ngang', '4K24', 'Tilt Locked', 'Low-Light'], tips: [
+            '🍂 Lá ngô đồng đang vàng: dành buổi sáng cho phố Vũ Khang, đi trước 9h cho vắng',
+            '🎨 Ngày: vàng ấm lá thu · Đêm: xanh ngọc – đỏ neon, grain · 🎵 City pop, sax',
+            '🧥 Trời se lạnh: pin hao nhanh, để máy và sạc dự phòng trong túi áo',
+            '📲 Chép video qua DJI Mimo không cần internet (nối thẳng máy với điện thoại)',
+          ], plan: [
+            { time: '06:15 – 07:10', kind: 'gold', place: 'Bến Thượng Hải · bình minh', shots: [
+              'Mặt trời mọc sau dãy tháp Lục Gia Chủy: quay bóng tòa nhà ngược sáng',
+              'Timelapse trời chuyển sáng, người tập thể dục dọc bờ sông',
+            ], set: ['Ngang', '4K24', 'Timelapse'] },
+            { time: '08:00 – 10:30', place: 'Phố Vũ Khang · khu Tô giới Pháp', shots: [
+              'Tòa nhà Vũ Khang hình mũi tàu: đứng góc ngã tư đối diện, Zoom 2x',
+              'Đi bộ dưới vòm lá ngô đồng vàng, quay theo sau lưng',
+              'Lá rơi, tung lá: Slow Motion · cận lá trên vỉa hè',
+              'Đi tiếp đường An Phúc, Hành Sơn: cà phê góc phố',
+            ], set: ['Dọc', '4K30', 'Tilt Locked', 'Slow Motion'] },
+            { time: '11:00 – 13:00', place: 'Dự Viên · Thành Hoàng Miếu', shots: [
+              'Mái cong, cầu Cửu Khúc, đèn lồng đỏ',
+              'Đông người: quay cận chi tiết, chạm đúp để cam bám theo người đi cùng',
+              'Tiểu long bao: cận cảnh bánh nghi ngút khói, Slow Motion lúc gắp',
+            ], set: ['4K30', 'Follow', 'Zoom 2x'] },
+            { time: '14:00 – 15:15', place: 'Điền Tử Phường hoặc Tân Thiên Địa', shots: [
+              'Ngõ nhỏ, cửa hàng, quán cà phê: vlog dọc',
+              'Chỗ ồn: đúp nút nguồn mic để khử ồn',
+            ], set: ['Dọc', '4K30', 'Follow'] },
+            { time: '15:15 – 16:10', place: 'Lục Gia Chủy → phà về Bến Thượng Hải', shots: [
+              'Đứng dưới chân tháp, ngẩng máy lên thật chậm',
+              'Cầu vượt tròn Lục Gia Chủy: Hyperlapse đi một vòng',
+              'Phà Đông Xương → Kim Lăng Đông (khoảng 2 tệ, 10 phút): skyline giữa sông, lan can làm tiền cảnh',
+            ], set: ['Ngang', '4K24', 'Hyperlapse'] },
+            { time: '16:17 – 17:09', kind: 'gold', place: 'Bến Thượng Hải · hoàng hôn (lặn 16:53)', shots: [
+              'Nắng chiều hắt vàng lên kính các tháp Lục Gia Chủy',
+              'Đặt máy trên lan can hoặc chân máy mini, Timelapse tới lúc lên đèn',
+            ], set: ['Ngang', '4K24', 'Tilt Locked', 'Timelapse'] },
+            { time: '17:09 – 17:19', kind: 'blue', place: 'Bến Thượng Hải · giờ xanh', shots: [
+              'Trời xanh đậm + đèn tòa nhà: cảnh đắt nhất trong ngày',
+              'Giữ máy yên 8–10 giây mỗi cảnh',
+            ], set: ['Ngang', '4K24', 'Low-Light'] },
+            { time: '18:00 – 22:00', place: 'Phố đi bộ Nam Kinh → quay lại bờ sông', shots: [
+              'Biển hiệu neon: Hyperlapse đi bộ, Slow Motion dòng người',
+              'Thứ Bảy rất đông: cầm máy sát người, đeo dây',
+              'Quay lại Bến Thượng Hải trước khi đèn tắt (thường khoảng 22–23h)',
+            ], set: ['Dọc', '4K30', 'Low-Light', 'Slow Motion'] },
+            { time: 'Thêm 1 ngày', place: 'Thị trấn nước Chu Gia Giác', shots: [
+              'Sáng sớm: cầu đá, kênh nước, mái ngói còn vắng người',
+              'Đi thuyền: cầm máy thấp sát mặt nước',
+            ], set: ['Ngang', '4K24', 'Tilt Locked'] },
           ]},
-          { group: 'trip', emoji: '🛶', name: 'Ninh Bình', scene: 'ninhbinh', city: 'ninhbinh', palette: ['#2E7D6B', '#8CC08A', '#E9D27A', '#DCE6DE'],
+          { group: 'trip', emoji: '🛶', name: 'Ninh Bình', scene: 'ninhbinh', city: 'ninhbinh', palette: ['#2E7D6B', '#8CC08A', '#C9B37A', '#DCE6DE'],
             tags: ['Ngang', '4K24', 'Tilt Locked', 'Panorama'], tips: [
-            '⏰ Sáng sớm có sương. Cuối tháng 5 – đầu tháng 6 lúa chín ở Tam Cốc',
-            '🎬 Trên thuyền Tràng An, Tam Cốc: cầm máy thấp sát mặt nước, Hyperlapse khi thuyền đi qua núi đá',
-            '🎬 Đỉnh Hang Múa: Panorama, Zoom 2x lấy khúc sông uốn quanh cánh đồng',
-            '🎨 Xanh ngọc – xanh lá, sương nhẹ · ⚠️ Trên thuyền: đeo dây máy, máy không chống nước',
+            '🌤️ Trời khô, mát, ít mưa: rất hợp quay. Sáng sớm hay có sương',
+            '🌾 Ruộng Tam Cốc đã gặt: tập trung núi đá, sông nước, hang động',
+            '🎨 Xanh ngọc – xanh lá, sương nhẹ · 🎵 Sáo trúc, nhạc không lời',
+            '🎙️ Trên thuyền: tắt khử ồn để giữ tiếng nước, mái chèo, chim',
+          ], plan: [
+            { time: '05:45 – 07:00', kind: 'gold', place: 'Đầm Vân Long · bình minh (mọc 06:10)', shots: [
+              'Mặt đầm phẳng lặng, sương sớm, núi đá in bóng nước',
+              'Thuyền nan trôi giữa đầm, hoa súng',
+              'Timelapse sương tan khi mặt trời lên',
+            ], set: ['Ngang', '4K24', 'Tilt Locked', 'Timelapse'] },
+            { time: '07:30 – 10:30', place: 'Tràng An · thuyền 2,5–3 giờ', shots: [
+              'Cầm máy thấp sát mặt nước, núi đá hai bên',
+              'Trong hang tối: chế độ Thiếu sáng, cúi người khi qua hang',
+              'Khoảnh khắc thuyền ra khỏi hang: từ tối ra sáng',
+              'Hyperlapse khi thuyền trôi · chạm đúp để cam bám người đi cùng',
+              'Đeo dây máy, máy không chống nước, mang sạc dự phòng',
+            ], set: ['Ngang', '4K24', 'Tilt Locked', 'Low-Light'] },
+            { time: '11:00 – 13:30', place: 'Chùa Bái Đính hoặc Cố đô Hoa Lư', shots: [
+              'Hành lang La Hán dài ở Bái Đính: Hyperlapse đi dọc hành lang',
+              'Trưa nắng gắt: quay trong bóng râm, cận mái ngói, tượng đá',
+            ], set: ['4K30', 'Follow', 'Hyperlapse'] },
+            { time: '14:00 – 15:30', place: 'Tam Cốc · đạp xe đường làng', shots: [
+              'Đạp xe giữa núi đá: cầm thấp, gimbal giữ hình êm',
+              'Con đường làng, đàn vịt, trâu, núi đá phía sau',
+              'Bích Động: cổng chùa nằm trong vách núi',
+            ], set: ['Dọc', '4K60', 'Tilt Locked'] },
+            { time: '16:45 – 17:31', kind: 'gold', place: 'Hang Múa · hoàng hôn (lặn 17:16)', shots: [
+              'Khoảng 500 bậc đá: bắt đầu leo trước 16h · Hyperlapse lúc leo',
+              'Toàn cảnh sông Ngô Đồng uốn quanh núi: Panorama, Zoom 2x',
+              'Tượng rồng đá trên đỉnh làm tiền cảnh, Timelapse mặt trời lặn',
+              'Giờ xanh 17:31 – 17:40: xuống núi khi trời còn sáng',
+            ], set: ['Ngang', '4K24', 'Tilt Locked', 'Panorama'] },
+            { time: 'Hoặc 17:00 – 18:00', place: 'Vườn chim Thung Nham · chim về tổ', shots: [
+              'Đàn chim bay về tổ trên mặt nước: Slow Motion',
+              'Zoom 2x lấy từng đàn chim, đứng yên quay lâu',
+            ], set: ['Ngang', 'Slow Motion', 'Zoom 2x'] },
+            { time: '19:00 – 21:30', place: 'Phố cổ Hoa Lư · buổi tối', shots: [
+              'Đèn lồng, mái ngói, phố đi bộ tối cuối tuần',
+              'Slow Motion người đi dạo dưới đèn lồng',
+            ], set: ['Dọc', '4K30', 'Low-Light', 'Slow Motion'] },
           ]},
           /* Khác */
           { group: 'other', emoji: '🚶‍♀️', name: 'Vlog đi dạo', scene: 'walk', tags: ['4K60', 'Tilt Locked', 'Joystick ×3'], tips: ['Mic cổ áo + bông lọc gió'] },
