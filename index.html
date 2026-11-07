@@ -90,6 +90,22 @@
     .tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700;
       background: #FCF1F4; color: #B04A6C; white-space: nowrap; }
     .dot { width: 10px; height: 10px; border-radius: 999px; flex-shrink: 0; display: inline-block; }
+    .chip { border-radius: 999px; padding: 6px 12px; font-size: 13.5px; font-weight: 600; border: 1px solid #fff; background: rgba(255,255,255,.75); }
+    .chip.on { background: #C2577A; color: #fff; border-color: #C2577A; }
+    .field { width: 100%; border-radius: 14px; background: rgba(255,255,255,.85); border: 1px solid var(--hairline); padding: 10px 12px; font-size: 16px; outline: none; }
+    .field:focus { border-color: #E58AA6; box-shadow: 0 0 0 3px rgba(194,87,122,.12); }
+    .btn { border-radius: 999px; padding: 9px 16px; font-size: 14px; font-weight: 700; }
+
+    /* Minh họa khung hình */
+    .shot { position: relative; height: 172px; display: flex; justify-content: center; }
+    .shot svg, .shot img { height: 100%; width: auto; max-width: 100%; border-radius: 12px; box-shadow: 0 6px 18px -8px rgba(60,30,50,.35); object-fit: cover; }
+    .shot .ratio { position: absolute; top: 6px; font-size: 10.5px; font-weight: 800; color: #fff; background: rgba(46,36,48,.45);
+      padding: 2px 6px; border-radius: 6px; letter-spacing: .02em; }
+
+    /* Thanh thời gian giờ vàng */
+    .timeline { position: relative; height: 14px; border-radius: 999px; background: #F6EFD9; overflow: hidden; }
+    .timeline .seg { position: absolute; top: 0; bottom: 0; }
+    .timeline .now { position: absolute; top: -3px; bottom: -3px; width: 3px; border-radius: 3px; background: #C2577A; box-shadow: 0 0 0 2px #fff; }
 
     .fade-in { animation: fade .25s ease-out; }
     @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
@@ -98,8 +114,8 @@
 
     /* Thanh tab nổi */
     .dock { position: fixed; z-index: 30; left: 50%; transform: translateX(-50%);
-      bottom: calc(env(safe-area-inset-bottom) + 12px); width: min(360px, calc(100% - 28px)); border-radius: 999px; padding: 5px; }
-    .dock .indicator { position: absolute; top: 0; bottom: 0; left: 0; width: calc(100% / 3); border-radius: 999px;
+      bottom: calc(env(safe-area-inset-bottom) + 12px); width: min(420px, calc(100% - 24px)); border-radius: 999px; padding: 5px; }
+    .dock .indicator { position: absolute; top: 0; bottom: 0; left: 0; width: 25%; border-radius: 999px;
       background: rgba(255,255,255,.92); box-shadow: 0 2px 10px -2px rgba(194,87,122,.28), inset 0 0 0 1px rgba(194,87,122,.08);
       transition: transform .35s cubic-bezier(.3,1.25,.4,1); }
 
@@ -203,26 +219,52 @@
             <div>
               <p class="text-[12px] font-bold uppercase tracking-wider text-soft" x-text="g.label"></p>
               <div class="mt-1.5 flex flex-wrap gap-1.5">
-                <template x-for="(r, i) in recipes" :key="g.id + i">
-                  <button x-show="r.group === g.id" class="press rounded-full px-3 py-1.5 text-[13.5px] font-semibold border transition"
-                          :class="recipe === i ? 'bg-rose text-white border-rose' : 'bg-white/75 border-white text-ink'"
+                <template x-for="(r, i) in all" :key="g.id + '-' + i">
+                  <button x-show="r.group === g.id" class="chip press" :class="recipe === i && !editing && 'on'"
                           @click="pick(i)" x-text="r.emoji + ' ' + r.name"></button>
+                </template>
+                <template x-if="g.id === 'mine'">
+                  <button class="chip press !border-dashed !border-rose/40 text-rose" @click="startNew()">+ Thêm</button>
                 </template>
               </div>
             </div>
           </template>
         </article>
 
-        <article class="glass card p-4">
-          <h2 class="font-round text-[20px] font-extrabold" x-text="cur.emoji + ' ' + cur.name"></h2>
-          <div class="mt-2.5 flex flex-wrap gap-1.5">
-            <template x-for="t in cur.tags" :key="t"><span class="tag" x-text="t"></span></template>
+        <!-- Chi tiết công thức -->
+        <article x-show="!editing" class="glass card p-4">
+          <div class="md:flex md:gap-5 md:items-start">
+            <div class="md:w-[300px] md:shrink-0">
+              <div class="shot" x-show="cur.img || cur.scene">
+                <template x-if="cur.img"><img :src="cur.img" alt="Ảnh tham khảo" /></template>
+                <template x-if="!cur.img && cur.scene"><span class="contents" x-html="scene(cur.scene)"></span></template>
+                <span class="ratio" x-show="!cur.img && cur.scene" x-text="sceneRatio(cur.scene)"></span>
+              </div>
+              <div x-show="cur.palette" class="mt-2.5 flex items-center justify-center gap-1.5">
+                <span class="text-[12px] text-soft mr-1">🎨 Màu dựng</span>
+                <template x-for="c in (cur.palette || [])" :key="c"><span class="h-4 w-7 rounded-full border border-white shadow-sm" :style="`background:${c}`"></span></template>
+              </div>
+            </div>
+            <div class="mt-3 md:mt-0 flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2">
+                <h2 class="font-round text-[20px] font-extrabold leading-tight" x-text="cur.emoji + ' ' + cur.name"></h2>
+                <div x-show="cur.group === 'mine'" class="flex gap-1.5 shrink-0">
+                  <button class="btn press bg-white/80 !py-1.5 !px-3 text-[13px]" @click="startEdit()">Sửa</button>
+                </div>
+              </div>
+              <div class="mt-2.5 flex flex-wrap gap-1.5">
+                <template x-for="t in cur.tags" :key="t"><span class="tag" x-text="t"></span></template>
+              </div>
+              <ul class="mt-3 space-y-1.5 text-[15px]">
+                <template x-for="t in cur.tips" :key="t">
+                  <li class="flex gap-2"><span class="mt-[9px] h-1.5 w-1.5 rounded-full bg-rose/60 shrink-0"></span><span x-html="t"></span></li>
+                </template>
+              </ul>
+              <button x-show="cur.city" class="mt-3 btn press bg-white/80 text-rose text-[13.5px] !py-2" @click="seeLight(cur.city)">
+                ☀️ Giờ vàng ở <span x-text="cityName(cur.city)"></span>
+              </button>
+            </div>
           </div>
-          <ul class="mt-3 space-y-1.5 text-[15px]">
-            <template x-for="t in cur.tips" :key="t">
-              <li class="flex gap-2"><span class="mt-[9px] h-1.5 w-1.5 rounded-full bg-rose/60 shrink-0"></span><span x-html="t"></span></li>
-            </template>
-          </ul>
           <div x-show="curGroup.tips" class="mt-4 rounded-2xl bg-white/60 border border-white px-3.5 py-3">
             <p class="text-[12px] font-bold uppercase tracking-wider text-soft">Mẹo chung</p>
             <ul class="mt-1.5 space-y-1 text-[14px] text-ink/85">
@@ -232,10 +274,110 @@
             </ul>
           </div>
         </article>
+
+        <!-- Form công thức của tôi -->
+        <article x-show="editing" x-cloak class="glass card p-4 space-y-3.5">
+          <h2 class="font-round text-[19px] font-extrabold" x-text="editing && editing.id ? 'Sửa công thức' : 'Công thức mới'"></h2>
+          <template x-if="editing">
+            <div class="space-y-3.5">
+              <div class="flex flex-wrap gap-1.5">
+                <template x-for="e in emojis" :key="e">
+                  <button class="h-9 w-9 rounded-xl text-[18px] press" :class="editing.emoji === e ? 'bg-rose-100 ring-2 ring-rose/50' : 'bg-white/70'" @click="editing.emoji = e" x-text="e"></button>
+                </template>
+              </div>
+              <input class="field" x-model="editing.name" placeholder="Tên, ví dụ: Review son kem" maxlength="40" />
+              <div>
+                <p class="text-[12px] font-bold uppercase tracking-wider text-soft mb-1.5">Thông số</p>
+                <div class="flex flex-wrap gap-1.5">
+                  <template x-for="t in [...tagChoices, ...editing.tags.filter(x => !tagChoices.includes(x))]" :key="t">
+                    <button class="chip press !py-1 !text-[13px]" :class="editing.tags.includes(t) && 'on'" @click="toggleTag(t)" x-text="t"></button>
+                  </template>
+                </div>
+                <input class="field mt-2" x-model="newTag" @keydown.enter.prevent="addTag()" placeholder="Thông số khác, ví dụ: Đèn 5600K (Enter để thêm)" maxlength="30" />
+              </div>
+              <textarea class="field" rows="3" x-model="editing.notes" placeholder="Ghi chú, mỗi dòng một ý"></textarea>
+              <div class="flex items-center gap-3">
+                <label class="btn press bg-white/80 text-[13.5px] cursor-pointer">
+                  📷 <span x-text="editing.img ? 'Đổi ảnh' : 'Thêm ảnh tham khảo'"></span>
+                  <input type="file" accept="image/*" class="hidden" @change="pickImage($event)" />
+                </label>
+                <template x-if="editing.img">
+                  <div class="flex items-center gap-2">
+                    <img :src="editing.img" class="h-12 w-12 rounded-lg object-cover" alt="" />
+                    <button class="text-[13px] text-soft underline" @click="editing.img = null">Bỏ ảnh</button>
+                  </div>
+                </template>
+              </div>
+              <p x-show="formError" class="text-[13px] text-rose" x-text="formError"></p>
+              <div class="flex items-center gap-2 pt-1">
+                <button class="btn press bg-rose text-white disabled:opacity-40" :disabled="!editing.name.trim()" @click="saveMine()">Lưu</button>
+                <button class="btn press bg-white/80" @click="cancelEdit()">Hủy</button>
+                <button x-show="editing.id" class="btn press text-rose ml-auto" @click="deleteMine()">Xóa</button>
+              </div>
+              <p class="text-[12px] text-soft">Lưu trên máy này, không đồng bộ sang máy khác.</p>
+            </div>
+          </template>
+        </article>
       </section>
 
-      <!-- ================= TAB 3: SỬA LỖI ================= -->
-      <section x-show="tab === 2" x-cloak class="fade-in grid gap-3 md:grid-cols-2 md:items-start">
+      <!-- ================= TAB 3: GIỜ ĐẸP ================= -->
+      <section x-show="tab === 2" x-cloak class="fade-in space-y-3">
+        <article class="glass card p-4">
+          <div class="flex items-center gap-2">
+            <select class="field !py-2 flex-1 min-w-0" x-model="cityKey" @change="store('osmo-guide:city', cityKey)">
+              <template x-if="here"><option value="here">📍 Vị trí của tôi</option></template>
+              <optgroup label="Việt Nam">
+                <template x-for="c in cities.filter(c => c.vn)" :key="c.key"><option :value="c.key" x-text="c.name" :selected="c.key === cityKey"></option></template>
+              </optgroup>
+              <optgroup label="Nước ngoài">
+                <template x-for="c in cities.filter(c => !c.vn)" :key="c.key"><option :value="c.key" x-text="c.name" :selected="c.key === cityKey"></option></template>
+              </optgroup>
+            </select>
+            <button class="btn press bg-white/80 shrink-0 !px-3" @click="locate()" :disabled="locating" x-text="locating ? '…' : '📍'" title="Dùng vị trí của tôi"></button>
+          </div>
+          <p x-show="geoError" class="text-[13px] text-rose mt-2" x-text="geoError"></p>
+
+          <div class="mt-4 flex items-end justify-between gap-3">
+            <div>
+              <p class="font-round text-[22px] font-extrabold leading-tight" x-text="sun.status"></p>
+              <p class="text-[14px] text-soft mt-0.5" x-text="sun.sub"></p>
+            </div>
+            <div class="seg flex rounded-full bg-white/70 p-1 text-[13px] font-semibold shrink-0">
+              <button class="px-3 py-1 rounded-full" :class="dayOff === 0 ? 'bg-white shadow text-rose' : 'text-soft'" @click="dayOff = 0">Hôm nay</button>
+              <button class="px-3 py-1 rounded-full" :class="dayOff === 1 ? 'bg-white shadow text-rose' : 'text-soft'" @click="dayOff = 1">Mai</button>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <div class="timeline">
+              <div class="seg" :style="`left:0;width:${sun.nightL}%;background:#2E3555`"></div>
+              <div class="seg" :style="`left:${sun.nightR}%;right:0;background:#2E3555`"></div>
+              <template x-for="(s, i) in sun.list" :key="i">
+                <div class="seg" :style="`left:${s.l}%;width:${s.w}%;background:${s.kind === 'gold' ? '#F4B860' : '#5B84C4'}`"></div>
+              </template>
+              <div x-show="dayOff === 0" class="now" :style="`left: calc(${sun.nowPct}% - 1.5px)`"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-soft mt-1"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>24h</span></div>
+          </div>
+
+          <div class="mt-3 hair">
+            <template x-for="(s, i) in sun.list" :key="'r' + i">
+              <div class="row" :class="s.active && 'font-bold'">
+                <span class="flex items-center gap-2.5"><span class="dot" :style="`background:${s.kind === 'gold' ? '#F4B860' : '#5B84C4'}`"></span><span x-text="s.label"></span></span>
+                <span class="v tabular-nums" x-text="s.range"></span>
+              </div>
+            </template>
+            <div class="row text-soft text-[14px]">
+              <span>🌅 Mọc <b class="text-ink tabular-nums" x-text="sun.rise"></b></span>
+              <span>🌇 Lặn <b class="text-ink tabular-nums" x-text="sun.set"></b></span>
+            </div>
+          </div>
+        </article>
+        <p class="text-[12px] text-soft text-center px-6">Giờ địa phương tại nơi chọn. Giờ vàng: mặt trời thấp, ánh sáng ấm. Giờ xanh: ngay trước bình minh và sau hoàng hôn.</p>
+      </section>
+
+      <!-- ================= TAB 4: SỬA LỖI ================= -->
+      <section x-show="tab === 3" x-cloak class="fade-in grid gap-3 md:grid-cols-2 md:items-start">
         <template x-for="grp in fixes" :key="grp.name">
           <article class="glass card px-4 py-3">
             <h2 class="h2 flex items-center gap-2 pt-1 pb-1"><span class="tile" :class="grp.grad" x-html="ic[grp.icon]"></span><span x-text="grp.name"></span></h2>
@@ -256,19 +398,20 @@
 
   <!-- ===== Thanh tab nổi ===== -->
   <nav class="dock glass" aria-label="Điều hướng">
-    <div class="relative grid grid-cols-3">
+    <div class="relative grid grid-cols-4">
       <div class="indicator" :style="`transform: translateX(${tab * 100}%)`"></div>
       <template x-for="(t, i) in tabs" :key="i">
         <button @click="go(i)" class="relative z-10 flex flex-col items-center gap-0.5 py-2 rounded-full transition-colors"
                 :class="tab === i ? 'text-rose' : 'text-soft'" :aria-current="tab === i ? 'page' : null">
           <span x-html="t.glyph"></span>
-          <span class="text-[11px] font-semibold" x-text="t.label"></span>
+          <span class="text-[11px] font-semibold whitespace-nowrap" x-text="t.label"></span>
         </button>
       </template>
     </div>
   </nav>
 
   <script>
+    /* ---------- Biểu tượng ---------- */
     const svg = (d, s = 15, w = 2.2) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
     const P = {
       cam:     '<rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="12" cy="13.5" r="3.5"/><path d="M9 7l1.5-3h3L15 7"/>',
@@ -281,18 +424,179 @@
       phone:   '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M12 8v6M9.5 11.5L12 14l2.5-2.5"/>',
       bolt:    '<path d="M13 2.5L4.5 13.5H12l-1 8 8.5-11H12z"/>',
       film:    '<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/>',
+      sun:     '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
       help:    '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.3"/><path d="M12 17h.01"/>',
+    };
+
+    /* ---------- Vị trí mặt trời (công thức thiên văn chuẩn, tính offline) ---------- */
+    const SUN = (() => {
+      const rad = Math.PI / 180, dayMs = 864e5, J1970 = 2440588, J2000 = 2451545, e = rad * 23.4397, J0 = 0.0009;
+      const toDays = d => d.valueOf() / dayMs - 0.5 + J1970 - J2000;
+      const fromJ = j => new Date((j + 0.5 - J1970) * dayMs);
+      return (date, lat, lng, alts) => {
+        const lw = rad * -lng, phi = rad * lat, d = toDays(date);
+        const n = Math.round(d - J0 - lw / (2 * Math.PI));
+        const ds = J0 + lw / (2 * Math.PI) + n;
+        const m = rad * (357.5291 + 0.98560028 * ds);
+        const l = m + rad * (1.9148 * Math.sin(m) + 0.02 * Math.sin(2 * m) + 0.0003 * Math.sin(3 * m)) + rad * 102.9372 + Math.PI;
+        const dc = Math.asin(Math.sin(e) * Math.sin(l));
+        const Jnoon = J2000 + ds + 0.0053 * Math.sin(m) - 0.0069 * Math.sin(2 * l);
+        const out = {};
+        for (const h of alts) {
+          const w = Math.acos((Math.sin(h * rad) - Math.sin(phi) * Math.sin(dc)) / (Math.cos(phi) * Math.cos(dc)));
+          if (isNaN(w)) { out[h] = [null, null]; continue; }
+          const Jset = J2000 + J0 + (w + lw) / (2 * Math.PI) + n + 0.0053 * Math.sin(m) - 0.0069 * Math.sin(2 * l);
+          out[h] = [fromJ(Jnoon - (Jset - Jnoon)), fromJ(Jset)];
+        }
+        return out;
+      };
+    })();
+
+    /* ---------- Minh họa khung hình (vẽ bằng SVG) ---------- */
+    const bg = (k, a, b, w, h) => `<defs><linearGradient id="sk-${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="${w}" height="${h}" fill="url(#sk-${k})"/>`;
+    const H = (k, a, b) => bg(k, a, b, 160, 90), V = (k, a, b) => bg(k, a, b, 90, 160);
+    const SCENES = {
+      /* ---- Beauty (dọc) ---- */
+      talk: { o: 'v', body: V('talk', '#FBE3EA', '#F1E6F7') +
+        '<circle cx="45" cy="62" r="31" fill="none" stroke="#fff" stroke-width="5" opacity=".95"/>' +
+        '<path d="M14 160 Q17 104 45 100 Q73 104 76 160Z" fill="#C2577A"/>' +
+        '<circle cx="45" cy="64" r="15" fill="#F2C9B0"/><path d="M30 62 Q30 44 45 44 Q61 44 60 62 Q56 52 45 52 Q36 52 30 62Z" fill="#4A3340"/>' +
+        '<circle cx="54" cy="114" r="2.6" fill="#2E2430"/>' +
+        '<rect x="60" y="118" width="9" height="22" rx="2.5" fill="#fff" stroke="#E58AA6"/>' +
+        '<rect x="0" y="134" width="90" height="26" fill="#2E2430" opacity=".08"/><rect x="76" y="58" width="14" height="76" fill="#2E2430" opacity=".08"/>' },
+      macro: { o: 'v', body: V('macro', '#F7EDE4', '#FBE3EA') +
+        '<ellipse cx="45" cy="134" rx="30" ry="5" fill="#E9D3C7"/>' +
+        '<rect x="29" y="62" width="32" height="72" rx="9" fill="#fff" stroke="#E5B7C6"/><rect x="36" y="88" width="18" height="24" rx="3" fill="#FCE6EE"/>' +
+        '<rect x="40" y="46" width="10" height="16" rx="2" fill="#E58AA6"/><rect x="50" y="46" width="15" height="5" rx="2" fill="#E58AA6"/>' +
+        '<path d="M68 58 Q71 64 68 67 Q65 64 68 58Z" fill="#F2B6C8"/><path d="M70 76 Q73 82 70 85 Q67 82 70 76Z" fill="#F2B6C8" opacity=".7"/>' },
+      beforeafter: { o: 'v', body: '<rect width="45" height="160" fill="#E6E1DE"/><rect x="45" width="45" height="160" fill="#FBE6EE"/>' +
+        '<circle cx="22.5" cy="68" r="13" fill="#D7C2B4"/><circle cx="67.5" cy="68" r="13" fill="#F6CDB8"/>' +
+        '<path d="M8 120 Q10 92 22.5 90 Q35 92 37 120Z" fill="#B9A9A3"/><path d="M53 120 Q55 92 67.5 90 Q80 92 82 120Z" fill="#E58AA6"/>' +
+        '<path d="M74 52l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z" fill="#fff"/>' +
+        '<rect x="44" width="2" height="160" fill="#fff"/>' +
+        '<text x="22.5" y="142" text-anchor="middle" font-size="8" font-weight="700" fill="#7C6F80">TRƯỚC</text><text x="67.5" y="142" text-anchor="middle" font-size="8" font-weight="700" fill="#C2577A">SAU</text>' },
+      hair: { o: 'v', body: V('hair', '#F2E8F8', '#FBE3EA') +
+        '<path d="M0 30 L48 62 L0 96Z" fill="#FFF3D6" opacity=".8"/>' +
+        '<circle cx="50" cy="66" r="14" fill="#F2C9B0"/>' +
+        '<path d="M37 60 Q40 46 54 48 Q66 52 66 66 Q74 92 86 116 Q70 106 62 92 Q60 110 70 132 Q52 116 50 86 Q44 76 37 60Z" fill="#7A4532"/>' +
+        '<path d="M60 70 Q70 96 84 112M56 74 Q62 100 68 126" stroke="#B57557" stroke-width="1.2" fill="none"/>' +
+        '<path d="M30 160 Q34 110 50 104 Q64 108 66 160Z" fill="#B39DE8"/>' },
+      unbox: { o: 'v', body: V('unbox', '#F6EFE8', '#EFE4DA') +
+        '<rect x="20" y="58" width="50" height="44" rx="3" fill="#E5C4A2"/><path d="M20 58 L8 48 L30 48 Z M70 58 L82 48 L60 48Z" fill="#D9B48E"/>' +
+        '<path d="M24 62 Q45 52 66 62 L66 72 L24 72Z" fill="#FAD4E0"/><rect x="38" y="64" width="14" height="22" rx="3" fill="#fff" stroke="#E58AA6"/>' +
+        '<ellipse cx="12" cy="98" rx="9" ry="12" fill="#F2C9B0"/><ellipse cx="78" cy="98" rx="9" ry="12" fill="#F2C9B0"/>' +
+        '<circle cx="74" cy="132" r="5" fill="#2E2430"/><text x="45" y="150" text-anchor="middle" font-size="7" fill="#7C6F80">mic trên bàn</text>' },
+      /* ---- Điện ảnh ---- */
+      fuji: { o: 'h', body: H('fuji', '#BFD9EE', '#F7E3DC') +
+        '<circle cx="128" cy="22" r="7" fill="#FFF3D6"/>' +
+        '<path d="M18 74 L80 20 L142 74Z" fill="#6F86A8"/><path d="M80 20 L68 31 L74 30 L78 34 L82 30 L87 33 L92 31Z" fill="#fff"/>' +
+        '<rect y="72" width="160" height="18" fill="#9DB9D3"/><path d="M34 72 L80 88 L126 72Z" fill="#6F86A8" opacity=".3"/>' +
+        '<g fill="#4A3340"><path d="M5 46h24l-5-5H10z M7 55h20l-4-4H11z M9 64h16l-3-4H12z"/><rect x="13" y="46" width="8" height="5"/><rect x="14" y="55" width="6" height="5"/><rect x="14" y="64" width="6" height="9"/><rect x="16.5" y="34" width="1" height="7"/></g>' },
+      shanghai: { o: 'h', body: H('shanghai', '#1E2547', '#4A3566') +
+        '<g fill="#10162B"><rect x="4" y="42" width="14" height="32"/><rect x="20" y="32" width="10" height="42"/><rect x="32" y="50" width="12" height="24"/>' +
+        '<rect x="94" y="28" width="12" height="46"/><rect x="108" y="40" width="14" height="34"/><path d="M126 74 L128 18 L134 14 L136 74Z"/><rect x="138" y="46" width="18" height="28"/></g>' +
+        '<path d="M66 16 V74 M60 74 L66 46 L72 74" stroke="#10162B" stroke-width="2.4" fill="none"/>' +
+        '<circle cx="66" cy="58" r="8" fill="#E8679B"/><circle cx="66" cy="34" r="6" fill="#E8679B"/><circle cx="66" cy="22" r="2.6" fill="#E8679B"/>' +
+        '<g fill="#F6D365" opacity=".85"><rect x="7" y="48" width="2" height="2"/><rect x="12" y="56" width="2" height="2"/><rect x="23" y="40" width="2" height="2"/><rect x="97" y="36" width="2" height="2"/><rect x="101" y="50" width="2" height="2"/><rect x="112" y="48" width="2" height="2"/><rect x="142" y="54" width="2" height="2"/></g>' +
+        '<rect y="74" width="160" height="16" fill="#1A2444"/><path d="M60 78h12M58 83h16M126 79h10M98 81h10" stroke="#E8679B" stroke-width="1.2" opacity=".6"/><path d="M20 80h10M140 84h10" stroke="#5FD3C9" stroke-width="1.2" opacity=".6"/>' },
+      seoul: { o: 'v', body: V('seoul', '#FCE5C8', '#F6D2C2') +
+        '<path d="M0 30 L32 70 L32 160 L0 160Z" fill="#D9B8A4"/><path d="M90 26 L58 70 L58 160 L90 160Z" fill="#E7C7B0"/>' +
+        '<path d="M32 160 L38 70 L52 70 L58 160Z" fill="#CFB7A8"/><path d="M33 140h24M34 124h22M35 110h20M36 98h18M37 88h16M37 80h16" stroke="#B9A090" stroke-width="1"/>' +
+        '<circle cx="70" cy="34" r="16" fill="#F2B632"/><circle cx="82" cy="46" r="12" fill="#E9A21F"/><circle cx="60" cy="48" r="10" fill="#F5C451"/><rect x="73" y="54" width="3" height="20" fill="#7A5A44"/>' +
+        '<circle cx="45" cy="98" r="3" fill="#4A3340"/><path d="M42 101 h6 l1 12 h-8z" fill="#C2577A"/>' },
+      hoian: { o: 'h', body: H('hoian', '#F5B98B', '#8E6A9A') +
+        '<rect y="38" width="160" height="34" fill="#E8B84A"/><rect y="34" width="160" height="5" fill="#8A4B3A"/>' +
+        '<g fill="#7A4B2E"><rect x="12" y="48" width="10" height="16"/><rect x="40" y="46" width="8" height="10"/><rect x="66" y="48" width="12" height="18"/><rect x="100" y="46" width="8" height="10"/><rect x="128" y="48" width="12" height="18"/></g>' +
+        '<path d="M0 18 Q80 34 160 18" stroke="#4A3340" stroke-width=".8" fill="none"/>' +
+        '<g><circle cx="20" cy="24" r="5" fill="#E2483D"/><circle cx="46" cy="28" r="5" fill="#F29E38"/><circle cx="72" cy="30" r="5" fill="#E2483D"/><circle cx="98" cy="30" r="5" fill="#F2C14E"/><circle cx="124" cy="27" r="5" fill="#E2483D"/><circle cx="148" cy="22" r="5" fill="#F29E38"/></g>' +
+        '<rect y="72" width="160" height="18" fill="#3D5A6C"/><g fill="#F29E38" opacity=".55"><ellipse cx="46" cy="80" rx="3" ry="1.2"/><ellipse cx="98" cy="82" rx="3" ry="1.2"/><ellipse cx="20" cy="84" rx="3" ry="1.2"/></g>' +
+        '<path d="M62 80 h26 l-4 5 h-18z" fill="#2E2430"/>' },
+      paris: { o: 'h', body: H('paris', '#F8D7B0', '#F4EBDD') +
+        '<circle cx="124" cy="28" r="9" fill="#FBE7C6"/>' +
+        '<path d="M79 10 h2 l8 62 h-5 l-4-20 l-4 20 h-5z" fill="#5C4A3F"/><rect x="73" y="38" width="14" height="2.5" fill="#5C4A3F"/><rect x="75" y="24" width="10" height="2" fill="#5C4A3F"/>' +
+        '<rect x="0" y="40" width="46" height="50" fill="#EADBC8"/><rect y="36" width="46" height="5" fill="#8C8C9A"/><rect x="114" y="44" width="46" height="46" fill="#EADBC8"/><rect x="114" y="40" width="46" height="5" fill="#8C8C9A"/>' +
+        '<g fill="#B9A48D"><rect x="6" y="48" width="6" height="9"/><rect x="20" y="48" width="6" height="9"/><rect x="34" y="48" width="6" height="9"/><rect x="6" y="64" width="6" height="9"/><rect x="20" y="64" width="6" height="9"/><rect x="34" y="64" width="6" height="9"/><rect x="120" y="52" width="6" height="9"/><rect x="134" y="52" width="6" height="9"/><rect x="148" y="52" width="6" height="9"/></g>' +
+        '<g fill="#D46A8C"><circle cx="9" cy="58" r="1.6"/><circle cx="23" cy="58" r="1.6"/><circle cx="137" cy="62" r="1.6"/></g>' +
+        '<rect y="80" width="160" height="10" fill="#CDBBA4"/>' },
+      iceland: { o: 'h', body: H('iceland', '#C7D2DC', '#EEF1F3') +
+        '<path d="M0 30 L40 22 L120 22 L160 32 L160 72 L0 72Z" fill="#3D4247"/><rect x="72" y="22" width="16" height="50" fill="#E9F2F6"/>' +
+        '<path d="M76 24v46M81 24v46M85 24v46" stroke="#C9D8E0" stroke-width="1"/><ellipse cx="80" cy="72" rx="34" ry="6" fill="#fff" opacity=".75"/>' +
+        '<rect y="72" width="160" height="18" fill="#26292D"/><circle cx="122" cy="76" r="1.6" fill="#2E2430"/><rect x="121" y="77.5" width="2.2" height="5" fill="#C2577A"/>' },
+      tropical: { o: 'h', body: H('tropical', '#8FD3E8', '#FFD9A8') +
+        '<circle cx="112" cy="54" r="11" fill="#FFE7A8"/><rect y="56" width="160" height="18" fill="#2BB0BE"/><path d="M90 60h40M98 66h26" stroke="#BDF1F4" stroke-width="1.2"/>' +
+        '<path d="M0 74 Q80 68 160 74 L160 90 L0 90Z" fill="#F2D7A0"/>' +
+        '<path d="M30 90 Q35 60 44 34" stroke="#6B4B2E" stroke-width="3.5" fill="none"/>' +
+        '<g fill="#2F8F5B"><path d="M44 34 Q24 26 12 36 Q28 30 44 36Z"/><path d="M44 34 Q60 22 74 30 Q58 28 44 36Z"/><path d="M44 34 Q34 16 22 14 Q36 22 43 36Z"/><path d="M44 34 Q56 44 60 58 Q50 46 43 36Z"/></g>' },
+      newyork: { o: 'h', body: H('newyork', '#6B5B95', '#F6A77E') +
+        '<g fill="#2B2440"><rect x="4" y="30" width="16" height="48"/><rect x="22" y="44" width="14" height="34"/><rect x="38" y="20" width="12" height="58"/><rect x="60" y="24" width="14" height="54"/><rect x="65.5" y="12" width="3" height="12"/>' +
+        '<rect x="78" y="40" width="16" height="38"/><rect x="98" y="28" width="12" height="50"/><rect x="114" y="46" width="18" height="32"/><rect x="136" y="34" width="20" height="44"/></g>' +
+        '<g fill="#F6D365" opacity=".7"><rect x="8" y="38" width="2" height="2"/><rect x="42" y="30" width="2" height="2"/><rect x="64" y="34" width="2" height="2"/><rect x="102" y="40" width="2" height="2"/><rect x="140" y="44" width="2" height="2"/></g>' +
+        '<rect y="78" width="160" height="12" fill="#3A3348"/><rect x="96" y="70" width="28" height="8" rx="2" fill="#F7C548"/><rect x="102" y="65.5" width="15" height="5" rx="1.5" fill="#F7C548"/>' +
+        '<circle cx="102" cy="78.5" r="2.6" fill="#1F1A2C"/><circle cx="118" cy="78.5" r="2.6" fill="#1F1A2C"/>' },
+      dalat: { o: 'h', body: H('dalat', '#DCE6E0', '#F4F1EA') +
+        '<path d="M0 54 Q40 30 80 46 Q120 30 160 50 L160 90 L0 90Z" fill="#A9BFAF"/>' +
+        '<g fill="#2F5D4A"><path d="M14 74 L22 40 L30 74Z"/><path d="M28 76 L34 50 L40 76Z"/><path d="M118 74 L127 36 L136 74Z"/><path d="M136 76 L143 48 L150 76Z"/><path d="M60 72 L65 54 L70 72Z"/></g>' +
+        '<rect y="46" width="160" height="8" fill="#fff" opacity=".55"/><rect y="62" width="160" height="6" fill="#fff" opacity=".45"/>' +
+        '<rect y="76" width="160" height="14" fill="#B7CBC9"/><g fill="#F2C230"><circle cx="50" cy="78" r="1.6"/><circle cx="56" cy="80" r="1.6"/><circle cx="90" cy="79" r="1.6"/><circle cx="96" cy="77" r="1.6"/></g>' },
+      sapa: { o: 'h', body: H('sapa', '#E4ECF2', '#F7F2E6') +
+        '<path d="M0 46 L36 18 L70 40 L104 14 L160 44 L160 90 L0 90Z" fill="#9DB3C0"/>' +
+        '<ellipse cx="50" cy="40" rx="28" ry="5" fill="#fff" opacity=".85"/><ellipse cx="120" cy="34" rx="24" ry="4" fill="#fff" opacity=".85"/>' +
+        '<path d="M0 56 Q80 44 160 58 L160 90 L0 90Z" fill="#8DBF5A"/>' +
+        '<path d="M0 64 Q80 52 160 66M0 72 Q80 60 160 74M0 80 Q80 68 160 82" stroke="#D9C25A" stroke-width="2.5" fill="none"/><path d="M0 68 Q80 56 160 70M0 76 Q80 64 160 78M0 86 Q80 74 160 88" stroke="#6FA64A" stroke-width="1.5" fill="none"/>' },
+      hanoi: { o: 'h', body: H('hanoi', '#F4DFC0', '#F9EEDC') +
+        '<g><rect x="40" y="26" width="18" height="54" fill="#E9C46A"/><rect x="60" y="34" width="16" height="46" fill="#E07A5F"/><rect x="78" y="22" width="18" height="58" fill="#81B29A"/><rect x="98" y="30" width="16" height="50" fill="#F2CC8F"/><rect x="116" y="38" width="20" height="42" fill="#E9C46A"/></g>' +
+        '<g fill="#5C4A3F" opacity=".6"><rect x="44" y="34" width="10" height="7"/><rect x="63" y="42" width="10" height="7"/><rect x="82" y="30" width="10" height="7"/><rect x="101" y="38" width="10" height="7"/><rect x="120" y="46" width="12" height="7"/></g>' +
+        '<path d="M40 50h96" stroke="#5C4A3F" stroke-width="1"/>' +
+        '<rect x="18" y="40" width="3" height="40" fill="#7A5A44"/><circle cx="20" cy="34" r="16" fill="#E9B949"/><circle cx="8" cy="42" r="9" fill="#F2C94C"/>' +
+        '<rect y="80" width="160" height="10" fill="#B8A48A"/><circle cx="62" cy="82" r="3" fill="#2E2430"/><circle cx="76" cy="82" r="3" fill="#2E2430"/><path d="M62 82 L66 76 H74 L76 82" stroke="#C2577A" stroke-width="2.5" fill="none"/><circle cx="70" cy="70" r="2.5" fill="#2E2430"/>' },
+      saigon: { o: 'h', body: H('saigon', '#14213D', '#3D3B6E') +
+        '<g fill="#0E1730"><rect x="6" y="46" width="16" height="30"/><rect x="24" y="36" width="12" height="40"/><rect x="40" y="52" width="16" height="24"/><rect x="120" y="44" width="14" height="32"/><rect x="138" y="54" width="18" height="22"/></g>' +
+        '<path d="M96 76 L100 14 L104 10 L108 14 L112 76Z" fill="#2A4E6E"/><path d="M100 18 L104 12 L108 18" stroke="#5FD3C9" stroke-width="1" fill="none"/><path d="M101 30v40M107 30v40" stroke="#5FD3C9" stroke-width=".8" opacity=".7"/>' +
+        '<rect y="76" width="160" height="14" fill="#1D2C4D"/><path d="M0 82 Q80 78 160 84" stroke="#F4A261" stroke-width="1.6" fill="none"/><path d="M0 86 Q80 82 160 88" stroke="#fff" stroke-width="1" fill="none" opacity=".7"/>' },
+      /* ---- Khác ---- */
+      walk: { o: 'v', body: V('walk', '#CFE8F3', '#FDF0E3') +
+        '<path d="M30 160 L42 80 L48 80 L60 160Z" fill="#E8DCCB"/><path d="M0 92 Q45 76 90 92 L90 160 L60 160 L48 80 L42 80 L30 160 L0 160Z" fill="#A9CFA0"/>' +
+        '<circle cx="18" cy="74" r="12" fill="#6FA64A"/><circle cx="74" cy="70" r="13" fill="#6FA64A"/>' +
+        '<circle cx="45" cy="106" r="4.5" fill="#4A3340"/><path d="M40 112 h10 l2 20 h-14z" fill="#C2577A"/><path d="M41 132 l-2 12M49 132 l2 12" stroke="#2E2430" stroke-width="2"/>' },
+      cafe: { o: 'h', body: H('cafe', '#F3E2D3', '#EAD2BE') +
+        '<rect x="96" y="10" width="54" height="50" rx="3" fill="#FFF7E8" stroke="#C9A98C" stroke-width="2"/><path d="M123 10v50M96 35h54" stroke="#C9A98C" stroke-width="2"/>' +
+        '<rect y="64" width="160" height="26" fill="#B98C68"/><path d="M50 52 h26 v12 a8 8 0 0 1 -8 8 h-10 a8 8 0 0 1 -8 -8z" fill="#fff"/><path d="M76 56 q7 0 7 6 q0 6 -7 6" stroke="#fff" stroke-width="2.5" fill="none"/>' +
+        '<path d="M58 46 q-3 -6 0 -12M66 46 q-3 -6 0 -12" stroke="#fff" stroke-width="1.6" fill="none" opacity=".8"/>' },
+      food: { o: 'v', body: V('food', '#F6EDE2', '#EFE2D2') +
+        '<circle cx="45" cy="88" r="30" fill="#fff" stroke="#E5D5C5" stroke-width="2"/><circle cx="45" cy="88" r="23" fill="#F2B880"/>' +
+        '<path d="M30 84 q8 -5 15 0 t15 0M30 92 q8 -5 15 0 t15 0" stroke="#FFF2D9" stroke-width="2.2" fill="none"/>' +
+        '<g fill="#4E9A7A"><circle cx="38" cy="78" r="2"/><circle cx="52" cy="98" r="2"/><circle cx="56" cy="80" r="1.6"/></g>' +
+        '<path d="M64 120 L84 60M70 122 L88 64" stroke="#A2774F" stroke-width="2"/>' +
+        '<path d="M36 52 q-4 -8 0 -16M46 50 q-4 -8 0 -16M56 52 q-4 -8 0 -16" stroke="#C9B7A6" stroke-width="1.6" fill="none"/>' },
+      travel: { o: 'h', body: H('travel', '#CFE8F3', '#FFF1DC') +
+        '<circle cx="120" cy="24" r="8" fill="#FFE2A8"/><path d="M0 70 L40 32 L74 60 L106 28 L160 68 L160 90 L0 90Z" fill="#8FA9C4"/>' +
+        '<path d="M0 78 Q80 62 160 80 L160 90 L0 90Z" fill="#9CC48A"/><path d="M78 90 Q86 80 80 72 Q74 66 86 62" stroke="#fff" stroke-width="3" fill="none"/>' },
+      interview: { o: 'h', body: H('interview', '#EDE6F7', '#FBF1F4') +
+        '<path d="M53 0V90M107 0V90M0 30H160M0 60H160" stroke="#fff" stroke-width=".8"/>' +
+        '<circle cx="55" cy="40" r="11" fill="#F2C9B0"/><path d="M34 90 Q36 58 55 56 Q74 58 76 90Z" fill="#8B72C9"/><circle cx="62" cy="66" r="2.2" fill="#2E2430"/>' +
+        '<circle cx="105" cy="40" r="11" fill="#E8BBA0"/><path d="M84 90 Q86 58 105 56 Q124 58 126 90Z" fill="#C2577A"/><circle cx="98" cy="66" r="2.2" fill="#2E2430"/>' },
     };
 
     function app() {
       return {
         tab: 0,
         recipe: 0,
+        dayOff: 0,
+        now: Date.now(),
+        cityKey: 'hn',
+        here: null,
+        locating: false,
+        geoError: '',
+        mine: [],
+        editing: null,
+        newTag: '',
+        formError: '',
         ic: Object.fromEntries(Object.entries(P).map(([k, d]) => [k, svg(d)])),
 
         tabs: [
           { label: 'Điều khiển', title: 'Điều khiển', glyph: svg(P.bolt, 22, 1.8) },
           { label: 'Công thức',  title: 'Công thức quay', glyph: svg(P.film, 22, 1.8) },
+          { label: 'Giờ đẹp',    title: 'Giờ vàng · Giờ xanh', glyph: svg(P.sun, 22, 1.8) },
           { label: 'Sửa lỗi',    title: 'Sửa lỗi nhanh', glyph: svg(P.help, 22, 1.8) },
         ],
 
@@ -354,93 +658,249 @@
           ['Follow', 'mặc định'], ['Tilt Locked', 'đi bộ'], ['FPV', 'nghiêng theo tay'],
         ],
         groups: [
+          { id: 'mine', label: '⭐ Của tôi' },
           { id: 'beauty', label: '💄 Beauty TikTok', tips: [
             'Video 15–45 giây, hook trong 3 giây đầu',
-            'Chừa trống phía dưới và bên phải cho chữ, nút của TikTok',
+            'Chừa trống phía dưới và bên phải cho chữ, nút của TikTok (vùng tối trong hình minh họa)',
             'Ghi rõ sản phẩm được tặng hay tự mua',
           ]},
           { id: 'cinema', label: '🎞️ Phong cảnh điện ảnh', tips: [
             '4K24, mỗi cảnh giữ 5–8 giây, máy đứng yên hoặc lia thật chậm',
-            'Giờ vàng, giờ xanh. Có tiền cảnh để tạo chiều sâu',
+            'Giờ vàng, giờ xanh (xem tab Giờ đẹp). Có tiền cảnh để tạo chiều sâu',
             'Đủ 3 cỡ cảnh: toàn, trung, cận chi tiết',
-            'Khi dựng: viền đen 2.35:1, chỉnh màu theo gợi ý 🎨',
+            'Khi dựng: viền đen 2.35:1, chỉnh màu theo dải 🎨',
           ]},
+          { id: 'vn', label: '🇻🇳 Việt Nam điện ảnh' },
           { id: 'other', label: 'Khác' },
         ],
         recipes: [
           /* Beauty */
-          { group: 'beauty', emoji: '🗣️', name: 'Nói review', tags: ['Dọc', '4K30', 'Follow', 'Mic cổ áo'], tips: [
+          { group: 'beauty', emoji: '🗣️', name: 'Nói review', scene: 'talk', tags: ['Dọc', '4K30', 'Follow', 'Mic cổ áo'], tips: [
             'Đèn trắng trước mặt, tắt đèn vàng',
             'Làm đẹp nhẹ khi nói, <b>tắt khi demo</b> trên da',
             'Phòng yên tĩnh: tắt khử ồn',
           ]},
-          { group: 'beauty', emoji: '🧴', name: 'Cận cảnh, kết cấu', tags: ['Dọc', '4K30', 'Zoom 2x', 'Tắt làm đẹp'], tips: [
+          { group: 'beauty', emoji: '🧴', name: 'Cận cảnh, kết cấu', scene: 'macro', tags: ['Dọc', '4K30', 'Zoom 2x', 'Tắt làm đẹp'], tips: [
             'Slow Motion cho bơm kem, giọt serum, dầu gội chảy',
             'Chạm đúp vào chai để cam bám theo',
             'Giữ nhãn trước ống kính 2–3 giây, tránh loá vỏ bóng',
           ]},
-          { group: 'beauty', emoji: '✨', name: 'Trước – sau', tags: ['Cố định', 'Tilt Locked', 'Tắt làm đẹp'], tips: [
+          { group: 'beauty', emoji: '✨', name: 'Trước – sau', scene: 'beforeafter', tags: ['Cố định', 'Tilt Locked', 'Tắt làm đẹp'], tips: [
             'Cùng chỗ, cùng góc, cùng nguồn sáng',
             'Giữ nguyên thông số cả hai lần quay',
           ]},
-          { group: 'beauty', emoji: '💇‍♀️', name: 'Dầu gội, tóc', tags: ['4K60', 'Slow Motion', 'Zoom 2x'], tips: [
+          { group: 'beauty', emoji: '💇‍♀️', name: 'Dầu gội, tóc', scene: 'hair', tags: ['4K60', 'Slow Motion', 'Zoom 2x'], tips: [
             'Máy không chống nước: đặt ngoài khu tắm',
             'Quay khi tóc đã khô, đèn chiếu từ bên cạnh cho tóc bóng',
           ]},
-          { group: 'beauty', emoji: '📦', name: 'Mở hộp ASMR', tags: ['Dọc', 'Tilt Locked', 'Cam nhìn xuống'], tips: [
+          { group: 'beauty', emoji: '📦', name: 'Mở hộp ASMR', scene: 'unbox', tags: ['Dọc', 'Tilt Locked', 'Cam nhìn xuống'], tips: [
             'Đặt mic trên bàn, <b>tắt khử ồn</b>',
             'Nền bàn trơn, sáng màu',
           ]},
-          /* Điện ảnh */
-          { group: 'cinema', emoji: '🗻', name: 'Phú Sĩ · Nhật', tags: ['Ngang', '4K24', 'Tilt Locked', 'Zoom 2x'], tips: [
+          /* Điện ảnh nước ngoài */
+          { group: 'cinema', emoji: '🗻', name: 'Phú Sĩ · Nhật', scene: 'fuji', city: 'fuji', palette: ['#DCE8F2', '#A9C3DA', '#F3E6E0', '#6F86A8'],
+            tags: ['Ngang', '4K24', 'Tilt Locked', 'Zoom 2x'], tips: [
             '⏰ Sáng sớm (trưa hay có mây), mùa đông – xuân',
             '🎬 Núi sau mái chùa, mặt hồ phản chiếu, Timelapse mây',
             '🎨 Nhạt, xanh lơ, tương phản thấp · 🎵 Piano, lo-fi',
           ]},
-          { group: 'cinema', emoji: '🌃', name: 'Thượng Hải · Trung', tags: ['Ngang', '4K24', 'Low-Light'], tips: [
+          { group: 'cinema', emoji: '🌃', name: 'Thượng Hải · Trung', scene: 'shanghai', city: 'shanghai', palette: ['#1E2547', '#3FB8AF', '#E8679B', '#F6D365'],
+            tags: ['Ngang', '4K24', 'Low-Light'], tips: [
             '⏰ Giờ xanh, ban đêm',
             '🎬 Skyline Lục Gia Chủy từ bờ Bến Thượng Hải, neon, Hyperlapse dọc sông',
             '🎨 Xanh ngọc – đỏ neon, grain · 🎵 City pop, sax',
           ]},
-          { group: 'cinema', emoji: '🍂', name: 'Seoul · Hàn', tags: ['4K24', 'Follow', 'Slow Motion'], tips: [
+          { group: 'cinema', emoji: '🍂', name: 'Seoul · Hàn', scene: 'seoul', city: 'seoul', palette: ['#FCE5C8', '#F5C451', '#F2C9B0', '#E8D9F0'],
+            tags: ['4K24', 'Follow', 'Slow Motion'], tips: [
             '⏰ Chiều nắng vàng, mùa thu, mùa anh đào',
             '🎬 Hẻm dốc, quán cà phê, đi theo sau nhân vật',
             '🎨 Kem pastel, da hồng · 🎵 Acoustic',
           ]},
-          { group: 'cinema', emoji: '🏮', name: 'Hội An · Việt Nam', tags: ['Ngang', '4K24', 'Low-Light'], tips: [
-            '⏰ Sáng sớm vắng người, chiều tối lên đèn',
-            '🎬 Tường vàng, đèn lồng, ngẩng từ mặt sông lên',
-            '🎨 Vàng cam ấm, grain · 🎵 Sáo trúc, đàn tranh',
-          ]},
-          { group: 'cinema', emoji: '🗼', name: 'Paris · Pháp', tags: ['Ngang', '4K24', 'Tilt Locked'], tips: [
+          { group: 'cinema', emoji: '🗼', name: 'Paris · Pháp', scene: 'paris', city: 'paris', palette: ['#F8D7B0', '#EADBC8', '#B9A48D', '#6E7F5E'],
+            tags: ['Ngang', '4K24', 'Tilt Locked'], tips: [
             '⏰ Giờ vàng; tối Eiffel nhấp nháy đầu mỗi giờ',
             '🎬 Cà phê vỉa hè, ban công hoa, quay qua cửa kính',
             '🎨 Ấm, tông kem · 🎵 Accordion, jazz',
           ]},
-          { group: 'cinema', emoji: '🏔️', name: 'Iceland · Bắc Âu', tags: ['Ngang', '4K24', 'Slow Motion', 'Panorama'], tips: [
+          { group: 'cinema', emoji: '🏔️', name: 'Iceland · Bắc Âu', scene: 'iceland', city: 'reykjavik', palette: ['#C7D2DC', '#8A99A6', '#3D4247', '#EEF1F3'],
+            tags: ['Ngang', '4K24', 'Slow Motion', 'Panorama'], tips: [
             '⏰ Bình minh, hoàng hôn',
             '🎬 Thác nước, cát đen, người nhỏ giữa cảnh rộng',
             '🎨 Lạnh, xanh xám · ⚠️ Lạnh hao pin, tránh bụi nước',
           ]},
-          { group: 'cinema', emoji: '🌴', name: 'Bali, Thái · Nhiệt đới', tags: ['4K60', 'Slow Motion'], tips: [
+          { group: 'cinema', emoji: '🌴', name: 'Bali, Thái · Nhiệt đới', scene: 'tropical', city: 'bali', palette: ['#2BB0BE', '#8FD3E8', '#FFD9A8', '#B9774F'],
+            tags: ['4K60', 'Slow Motion'], tips: [
             '⏰ Sáng sớm, hoàng hôn',
             '🎬 Biển, ruộng bậc thang, hồ vô cực',
             '🎨 Xanh ngọc, da nâu ấm · ⚠️ Giữ máy xa nước',
           ]},
-          { group: 'cinema', emoji: '🗽', name: 'New York · Mỹ', tags: ['Ngang', '4K24', 'Hyperlapse'], tips: [
+          { group: 'cinema', emoji: '🗽', name: 'New York · Mỹ', scene: 'newyork', city: 'nyc', palette: ['#2B6F7A', '#F6A77E', '#F7C548', '#2B2440'],
+            tags: ['Ngang', '4K24', 'Hyperlapse'], tips: [
             '⏰ Hoàng hôn, ban đêm',
             '🎬 Taxi vàng, ngã tư, cầu Brooklyn, cầm máy thấp',
             '🎨 Teal & orange, tương phản cao · 🎵 Jazz, hip-hop',
           ]},
+          /* Việt Nam */
+          { group: 'vn', emoji: '🏮', name: 'Hội An', scene: 'hoian', city: 'hoian', palette: ['#E8B84A', '#E2483D', '#F29E38', '#3D5A6C'],
+            tags: ['Ngang', '4K24', 'Low-Light'], tips: [
+            '⏰ Sáng sớm vắng người, chiều tối lên đèn',
+            '🎬 Tường vàng, đèn lồng, ngẩng từ mặt sông lên',
+            '🎨 Vàng cam ấm, grain · 🎵 Sáo trúc, đàn tranh',
+          ]},
+          { group: 'vn', emoji: '🌲', name: 'Đà Lạt', scene: 'dalat', city: 'dalat', palette: ['#DCE6E0', '#7C9C88', '#2F5D4A', '#F2C230'],
+            tags: ['Ngang', '4K24', 'Follow'], tips: [
+            '⏰ Sáng sớm có sương, tháng 11 mùa dã quỳ',
+            '🎬 Rừng thông, mặt hồ, quán cà phê gỗ, Timelapse sương tan',
+            '🎨 Xanh rêu, mờ sương, hơi ấm · 🎵 Acoustic, indie',
+          ]},
+          { group: 'vn', emoji: '⛰️', name: 'Sa Pa', scene: 'sapa', city: 'sapa', palette: ['#E4ECF2', '#8DBF5A', '#D9C25A', '#9DB3C0'],
+            tags: ['Ngang', '4K24', 'Panorama', 'Timelapse'], tips: [
+            '⏰ Sáng sớm săn mây; tháng 9 lúa chín',
+            '🎬 Ruộng bậc thang, mây trôi qua núi, bản làng',
+            '🎨 Xanh lá – vàng lúa, trong · ⚠️ Lạnh, ẩm: giữ pin ấm',
+          ]},
+          { group: 'vn', emoji: '🛵', name: 'Phố cổ Hà Nội', scene: 'hanoi', city: 'hn', palette: ['#E9C46A', '#E07A5F', '#81B29A', '#F4DFC0'],
+            tags: ['4K24', 'Tilt Locked', 'Slow Motion'], tips: [
+            '⏰ Sáng sớm quanh Hồ Gươm, chiều thu nắng nhạt',
+            '🎬 Gánh hàng rong, dòng xe máy, nhìn xuống phố từ ban công quán cà phê',
+            '🎨 Vàng ấm hoài niệm, grain · 🎵 Nhạc xưa không lời',
+          ]},
+          { group: 'vn', emoji: '🌆', name: 'Sài Gòn về đêm', scene: 'saigon', city: 'hcm', palette: ['#14213D', '#2A4E6E', '#5FD3C9', '#F4A261'],
+            tags: ['Ngang', '4K24', 'Low-Light', 'Hyperlapse'], tips: [
+            '⏰ Giờ xanh, ban đêm',
+            '🎬 Phố đi bộ Nguyễn Huệ, Landmark 81 từ bờ sông, Timelapse dòng xe',
+            '🎨 Xanh ngọc – cam, tương phản cao · 🎵 Lo-fi, R&B',
+          ]},
           /* Khác */
-          { group: 'other', emoji: '🚶‍♀️', name: 'Vlog đi dạo', tags: ['4K60', 'Tilt Locked', 'Joystick ×3'], tips: ['Mic cổ áo + bông lọc gió'] },
-          { group: 'other', emoji: '☕', name: 'Quán cà phê', tags: ['4K30', 'Follow', 'Low-Light nếu tối'], tips: ['Bật khử ồn, ngồi hướng ra cửa sổ'] },
-          { group: 'other', emoji: '🍜', name: 'Đồ ăn', tags: ['Dọc', '4K30', 'Zoom 2x'], tips: ['Cam chếch xuống, Slow Motion cảnh rót, tắt làm đẹp'] },
-          { group: 'other', emoji: '🏞️', name: 'Du lịch', tags: ['Ngang', '4K30', 'Timelapse', 'Panorama'], tips: ['Lia chậm, quay sáng sớm hoặc chiều muộn'] },
-          { group: 'other', emoji: '🎤', name: 'Phỏng vấn 2 người', tags: ['Ngang', '4K30', '2 mic'], tips: ['Kiểm tra cả hai đèn mic, quay thử 10 giây'] },
+          { group: 'other', emoji: '🚶‍♀️', name: 'Vlog đi dạo', scene: 'walk', tags: ['4K60', 'Tilt Locked', 'Joystick ×3'], tips: ['Mic cổ áo + bông lọc gió'] },
+          { group: 'other', emoji: '☕', name: 'Quán cà phê', scene: 'cafe', tags: ['4K30', 'Follow', 'Low-Light nếu tối'], tips: ['Bật khử ồn, ngồi hướng ra cửa sổ'] },
+          { group: 'other', emoji: '🍜', name: 'Đồ ăn', scene: 'food', tags: ['Dọc', '4K30', 'Zoom 2x'], tips: ['Cam chếch xuống, Slow Motion cảnh rót, tắt làm đẹp'] },
+          { group: 'other', emoji: '🏞️', name: 'Du lịch', scene: 'travel', tags: ['Ngang', '4K30', 'Timelapse', 'Panorama'], tips: ['Lia chậm, quay sáng sớm hoặc chiều muộn'] },
+          { group: 'other', emoji: '🎤', name: 'Phỏng vấn 2 người', scene: 'interview', tags: ['Ngang', '4K30', '2 mic'], tips: ['Kiểm tra cả hai đèn mic, quay thử 10 giây'] },
         ],
-        get cur() { return this.recipes[this.recipe] || this.recipes[0]; },
+        get all() { return [...this.recipes, ...this.mine]; },
+        get cur() { return this.all[this.recipe] || this.all[0]; },
         get curGroup() { return this.groups.find(g => g.id === this.cur.group) || {}; },
+        scene(k) {
+          const s = SCENES[k]; if (!s) return '';
+          const [w, h] = s.o === 'v' ? [90, 160] : [160, 90];
+          return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Minh họa khung hình" xmlns="http://www.w3.org/2000/svg">${s.body}</svg>`;
+        },
+        sceneRatio(k) { return (SCENES[k] || {}).o === 'v' ? '9:16' : '16:9'; },
+
+        /* ---------- Công thức của tôi ---------- */
+        emojis: ['⭐', '💄', '💋', '🌸', '🎬', '☕', '🌙', '🏙️', '🌿', '📦'],
+        tagChoices: ['Dọc', 'Ngang', '4K24', '4K30', '4K60', 'Slow Motion', 'Low-Light', 'Follow', 'Tilt Locked', 'FPV', 'Zoom 2x', 'Tắt làm đẹp', 'Làm đẹp nhẹ', 'Khử ồn', 'Mic cổ áo'],
+        startNew() { this.formError = ''; this.newTag = ''; this.editing = { id: null, emoji: '⭐', name: '', tags: [], notes: '', img: null }; },
+        startEdit() {
+          const r = this.cur; this.formError = ''; this.newTag = '';
+          this.editing = { id: r.id, emoji: r.emoji, name: r.name, tags: [...r.tags], notes: r.tips.join('\n'), img: r.img || null };
+        },
+        cancelEdit() { this.editing = null; },
+        toggleTag(t) { const a = this.editing.tags; const i = a.indexOf(t); i < 0 ? a.push(t) : a.splice(i, 1); },
+        addTag() { const t = this.newTag.trim(); if (t && !this.editing.tags.includes(t)) this.editing.tags.push(t); this.newTag = ''; },
+        async pickImage(ev) {
+          const f = ev.target.files && ev.target.files[0]; ev.target.value = ''; if (!f) return;
+          try {
+            const url = URL.createObjectURL(f); const img = new Image(); img.src = url; await img.decode();
+            const k = Math.min(1, 640 / Math.max(img.width, img.height));
+            const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+            c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+            this.editing.img = c.toDataURL('image/jpeg', 0.72);
+          } catch (e) { this.formError = 'Không đọc được ảnh này, thử ảnh khác.'; }
+        },
+        persistMine(list) {
+          try { localStorage.setItem('osmo-guide:mine', JSON.stringify(list)); return true; }
+          catch (e) { this.formError = 'Bộ nhớ của trình duyệt đã đầy. Thử bỏ bớt ảnh.'; return false; }
+        },
+        saveMine() {
+          const e = this.editing; const name = e.name.trim(); if (!name) return;
+          const item = { id: e.id || ('m' + Date.now()), group: 'mine', emoji: e.emoji, name, tags: e.tags,
+            tips: e.notes.split('\n').map(s => s.trim()).filter(Boolean), img: e.img || null };
+          const list = this.mine.map(r => ({ ...r }));
+          const i = list.findIndex(r => r.id === item.id); i >= 0 ? list[i] = item : list.push(item);
+          if (!this.persistMine(list)) return;
+          this.mine = list; this.editing = null;
+          this.pick(this.recipes.length + list.findIndex(r => r.id === item.id));
+        },
+        deleteMine() {
+          const list = this.mine.filter(r => r.id !== this.editing.id);
+          if (!this.persistMine(list)) return;
+          this.mine = list; this.editing = null; this.pick(0);
+        },
+
+        /* ---------- Giờ đẹp ---------- */
+        cities: [
+          { key: 'hn', name: 'Hà Nội', lat: 21.028, lng: 105.854, tz: 'Asia/Ho_Chi_Minh', vn: true },
+          { key: 'hcm', name: 'TP. Hồ Chí Minh', lat: 10.776, lng: 106.701, tz: 'Asia/Ho_Chi_Minh', vn: true },
+          { key: 'hoian', name: 'Hội An', lat: 15.880, lng: 108.335, tz: 'Asia/Ho_Chi_Minh', vn: true },
+          { key: 'dalat', name: 'Đà Lạt', lat: 11.940, lng: 108.458, tz: 'Asia/Ho_Chi_Minh', vn: true },
+          { key: 'sapa', name: 'Sa Pa', lat: 22.336, lng: 103.844, tz: 'Asia/Ho_Chi_Minh', vn: true },
+          { key: 'fuji', name: 'Núi Phú Sĩ (Kawaguchiko)', lat: 35.517, lng: 138.751, tz: 'Asia/Tokyo' },
+          { key: 'shanghai', name: 'Thượng Hải', lat: 31.240, lng: 121.490, tz: 'Asia/Shanghai' },
+          { key: 'seoul', name: 'Seoul', lat: 37.566, lng: 126.978, tz: 'Asia/Seoul' },
+          { key: 'bangkok', name: 'Bangkok', lat: 13.756, lng: 100.502, tz: 'Asia/Bangkok' },
+          { key: 'bali', name: 'Bali (Ubud)', lat: -8.507, lng: 115.263, tz: 'Asia/Makassar' },
+          { key: 'paris', name: 'Paris', lat: 48.857, lng: 2.352, tz: 'Europe/Paris' },
+          { key: 'reykjavik', name: 'Reykjavík', lat: 64.147, lng: -21.943, tz: 'Atlantic/Reykjavik' },
+          { key: 'nyc', name: 'New York', lat: 40.713, lng: -74.006, tz: 'America/New_York' },
+        ],
+        get city() { return this.cityKey === 'here' && this.here ? this.here : (this.cities.find(c => c.key === this.cityKey) || this.cities[0]); },
+        cityName(k) { const c = this.cities.find(c => c.key === k); return c ? c.name.replace(/ \(.*\)/, '') : ''; },
+        seeLight(k) { this.cityKey = k; this.store('osmo-guide:city', k); this.dayOff = 0; this.go(2); },
+        locate() {
+          this.geoError = '';
+          if (!navigator.geolocation) { this.geoError = 'Trình duyệt không hỗ trợ lấy vị trí.'; return; }
+          this.locating = true;
+          navigator.geolocation.getCurrentPosition(p => {
+            this.here = { key: 'here', name: 'Vị trí của tôi', lat: p.coords.latitude, lng: p.coords.longitude, tz: Intl.DateTimeFormat().resolvedOptions().timeZone };
+            this.store('osmo-guide:here', JSON.stringify(this.here));
+            this.cityKey = 'here'; this.store('osmo-guide:city', 'here'); this.locating = false;
+          }, () => { this.locating = false; this.geoError = 'Không lấy được vị trí. Hãy cho phép quyền vị trí hoặc chọn thành phố.'; },
+          { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 });
+        },
+        dayTimes(off) {
+          const c = this.city;
+          const ymd = new Intl.DateTimeFormat('en-CA', { timeZone: c.tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(this.now + off * 864e5)).split('-').map(Number);
+          const t = SUN(new Date(Date.UTC(ymd[0], ymd[1] - 1, ymd[2], 12) - c.lng / 15 * 3600e3), c.lat, c.lng, [-6, -4, -0.833, 6]);
+          let list;
+          if (!t[6][0] && t[-4][0]) {
+            list = [{ kind: 'blue', label: 'Giờ xanh sáng', a: t[-6][0], b: t[-4][0] }, { kind: 'gold', label: 'Giờ vàng (gần cả ngày)', a: t[-4][0], b: t[-4][1] }, { kind: 'blue', label: 'Giờ xanh tối', a: t[-4][1], b: t[-6][1] }];
+          } else {
+            list = [
+              { kind: 'blue', label: 'Giờ xanh sáng', a: t[-6][0], b: t[-4][0] },
+              { kind: 'gold', label: 'Giờ vàng sáng', a: t[-4][0], b: t[6][0] },
+              { kind: 'gold', label: 'Giờ vàng chiều', a: t[6][1], b: t[-4][1] },
+              { kind: 'blue', label: 'Giờ xanh tối', a: t[-4][1], b: t[-6][1] },
+            ];
+          }
+          return { list: list.filter(s => s.a && s.b), rise: t[-0.833][0], set: t[-0.833][1] };
+        },
+        fmt(d) { return d ? new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: this.city.tz }).format(d) : '—'; },
+        minOfDay(d) {
+          const p = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: this.city.tz }).formatToParts(d);
+          return (+p.find(x => x.type === 'hour').value) * 60 + (+p.find(x => x.type === 'minute').value);
+        },
+        dur(ms) { const m = Math.max(1, Math.round(ms / 60000)), h = Math.floor(m / 60); return h ? `${h} giờ ${String(m % 60).padStart(2, '0')} phút` : `${m} phút`; },
+        get sun() {
+          const day = this.dayTimes(this.dayOff), now = this.now;
+          const list = day.list.map(s => {
+            let l = this.minOfDay(s.a) / 14.4, r = this.minOfDay(s.b) / 14.4; if (r < l) r = 100;
+            return { ...s, l, w: Math.max(r - l, 0.6), range: `${this.fmt(s.a)} – ${this.fmt(s.b)}`, active: this.dayOff === 0 && now >= s.a && now <= s.b };
+          });
+          let status = '', sub = '';
+          const name = s => s.kind === 'gold' ? 'Giờ vàng' : 'Giờ xanh';
+          if (!list.length) { status = 'Không có giờ vàng rõ rệt'; sub = 'Mặt trời ở quá cao hoặc quá thấp cả ngày'; }
+          else if (this.dayOff === 1) { status = 'Ngày mai'; sub = `${name(list[0])} đầu tiên lúc ${this.fmt(list[0].a)}`; }
+          else {
+            const act = list.find(s => s.active), next = list.find(s => s.a > now);
+            if (act) { status = `Đang ${name(act).toLowerCase()} ✨`; sub = `Còn ${this.dur(act.b - now)}, tới ${this.fmt(act.b)}`; }
+            else if (next) { status = `${name(next)} sau ${this.dur(next.a - now)}`; sub = `Bắt đầu lúc ${this.fmt(next.a)}`; }
+            else { const tm = this.dayTimes(1).list[0]; status = 'Hết giờ đẹp hôm nay'; sub = tm ? `${name(tm)} sáng mai lúc ${this.fmt(tm.a)}` : ''; }
+          }
+          const nightL = list.length ? list[0].l : 0, last = list[list.length - 1], nightR = list.length ? Math.min(100, last.l + last.w) : 100;
+          return { list, status, sub, nightL, nightR, rise: this.fmt(day.rise), set: this.fmt(day.set), nowPct: this.minOfDay(new Date(now)) / 14.4 };
+        },
 
         /* ---------- Sửa lỗi ---------- */
         fixes: [
@@ -474,13 +934,18 @@
         init() {
           try {
             ['osmo-guide:checklist', 'osmo-guide:start', 'osmo-guide:learn', 'osmo-guide:shoot'].forEach(k => localStorage.removeItem(k));
+            this.mine = JSON.parse(localStorage.getItem('osmo-guide:mine') || '[]') || [];
+            this.here = JSON.parse(localStorage.getItem('osmo-guide:here') || 'null');
+            const c = localStorage.getItem('osmo-guide:city'); if (c && (c !== 'here' || this.here) && (c === 'here' || this.cities.some(x => x.key === c))) this.cityKey = c;
             const t = parseInt(localStorage.getItem('osmo-guide:tab'), 10); if (t >= 0 && t < this.tabs.length) this.tab = t;
-            const r = parseInt(localStorage.getItem('osmo-guide:recipe'), 10); if (r >= 0 && r < this.recipes.length) this.recipe = r;
+            const r = parseInt(localStorage.getItem('osmo-guide:recipe'), 10); if (r >= 0 && r < this.all.length) this.recipe = r;
           } catch (e) {}
+          setInterval(() => { this.now = Date.now(); }, 30000);
+          document.addEventListener('visibilitychange', () => { if (!document.hidden) this.now = Date.now(); });
         },
         store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
-        go(i) { this.tab = i; window.scrollTo({ top: 0 }); this.store('osmo-guide:tab', i); },
-        pick(i) { this.recipe = i; this.store('osmo-guide:recipe', i); },
+        go(i) { this.tab = i; this.editing = null; window.scrollTo({ top: 0 }); this.store('osmo-guide:tab', i); },
+        pick(i) { this.recipe = i; this.editing = null; this.store('osmo-guide:recipe', i); },
       };
     }
   </script>
