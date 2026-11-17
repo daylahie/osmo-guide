@@ -346,6 +346,11 @@
               <div class="cell"><span class="tile" :class="r[1]" x-html="ico(r[0], 17, 2)"></span>
                 <div class="cell-body"><span class="cell-title" x-text="r[2]"></span><span class="cell-value" x-text="r[3]"></span></div></div>
             </template></div></div>
+          <div><p class="sh">Chế độ gimbal</p>
+            <div class="list"><template x-for="r in gimbalRows" :key="r[2]">
+              <div class="cell"><span class="tile" :class="r[1]" x-html="ico(r[0], 17, 2)"></span>
+                <div class="cell-body"><span class="cell-title" x-text="r[2]"></span><span class="cell-value" x-text="r[3]"></span></div></div>
+            </template></div></div>
           <div><p class="sh">Thông số</p>
             <div class="list"><template x-for="r in specs" :key="r[2]">
               <div class="cell"><span class="tile" :class="r[1]" x-html="ico(r[0], 17, 2)"></span>
@@ -751,6 +756,13 @@
           ['vsign', 'g-peach', 'Chữ V', 'Quay / dừng (0,5–5 m)'],
           ['flip', 'g-lilac', 'Selfie Flip', 'Vuốt ↓ › bật / tắt'],
         ],
+        gimbalRows: [
+          ['swDown', 'g-gray', 'Cách đổi', 'Vuốt ↓ › chạm icon gimbal'],
+          ['follow', 'g-sky', 'Follow', 'Mặc định, hợp mọi lúc'],
+          ['tilt', 'g-rose', 'Tilt Locked', 'Đi bộ, hình không nhún'],
+          ['fpv', 'g-lilac', 'FPV', 'Nghiêng theo tay'],
+          ['custom', 'g-yellow', 'Đổi nhanh hơn', 'Gán vào nút tùy chỉnh'],
+        ],
         micButtons: [
           ['box', 'g-gray', 'Lấy khỏi hộp', 'Tự bật, tự kết nối'],
           ['noise', 'g-teal', 'Đúp nút nguồn', 'Bật / tắt khử ồn'],
@@ -1057,6 +1069,7 @@
             ['Màu nhạt, xám', 'Đang ở D-Log. Vuốt ← đổi về màu Bình thường.'],
             ['Chữ selfie bị ngược', 'Vuốt ↓ › tắt <b>Selfie Flip</b>. Màn hình luôn hiện như gương, file quay mới là chiều thật.'],
             ['Không bám mặt', 'Chạm đúp lại, đủ sáng, đứng gần hơn.'],
+            ['Hình nhún khi đi bộ', 'Bật Tilt Locked: vuốt ↓ › chạm icon gimbal › Tilt Locked.'],
           ]},
           { name: 'Pin, thẻ, nhiệt', grad: 'g-peach', icon: 'battery', items: [
             ['Lỗi thẻ nhớ', 'Dùng thẻ U3/V30, format trong máy (xóa hết dữ liệu).'],
