@@ -4,7 +4,7 @@ Bảng tra nhanh DJI Osmo Pocket 4 & DJI Mic Mini 2 — web app 1 trang, mobile-
 
 - Không cần build: chỉ `index.html` (Tailwind CSS + Alpine.js qua CDN).
 - PWA: mở bằng Safari → Chia sẻ → **Thêm vào MH chính** để chạy toàn màn hình.
-- 4 tab: Điều khiển, Công thức (có minh họa khung hình), Giờ vàng · Giờ xanh, Sửa lỗi.
+- 4 tab: Hôm nay (giờ vàng, chuyến đi, quay nhanh), Công thức (bảng trượt chi tiết), Máy, Sửa lỗi (có tìm kiếm). Tự đổi sáng / tối theo máy.
 - Giờ vàng / giờ xanh tính ngay trên máy theo vị trí mặt trời, không cần mạng.
 - "Công thức của tôi" và các lựa chọn được lưu trong `localStorage` của trình duyệt (chỉ trên máy đó).
 
